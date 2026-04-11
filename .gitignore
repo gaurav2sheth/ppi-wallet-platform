@@ -1,0 +1,25 @@
+# Sub-project repos (each has its own GitHub repo)
+paytm-wallet-app/
+admin-dashboard/
+mcp/
+api-server/
+ppi-wallet-api-deploy/
+
+# Project Folder PPI (has node_modules, build artefacts)
+Project Folder PPI/
+
+# Node
+node_modules/
+
+# Claude local settings (machine-specific)
+.claude/settings.local.json
+.claude/launch.json
+.claude/plans/
+.claude/todos/
+
+# Runtime data
+.shared-data/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PPSL PPI Wallet — Build Dashboard</title>
+<style>
+  :root {
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --border:    #30363d;
+    --muted:     #8b949e;
+    --text:      #e6edf3;
+    --blue:      #58a6ff;
+    --green:     #3fb950;
+    --red:       #f85149;
+    --yellow:    #d29922;
+    --purple:    #bc8cff;
+    --orange:    #e3b341;
+    --pill-done: rgba(63,185,80,.15);
+    --pill-wip:  rgba(210,153,34,.15);
+    --pill-plan: rgba(88,166,255,.1);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ── top bar ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; }
+  .logo svg { flex-shrink: 0; }
+  .status-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--pill-done);
+    color: var(--green);
+    border: 1px solid rgba(63,185,80,.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .last-updated { color: var(--muted); font-size: 12px; }
+
+  /* ── layout ── */
+  main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  /* ── stat cards ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    transition: border-color .2s;
+  }
+  .card:hover { border-color: var(--blue); }
+  .card-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+  .card-value { font-size: 32px; font-weight: 700; line-height: 1; }
+  .card-sub   { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .card-value.green  { color: var(--green); }
+  .card-value.blue   { color: var(--blue); }
+  .card-value.yellow { color: var(--yellow); }
+  .card-value.purple { color: var(--purple); }
+  .card-value.red    { color: var(--red); }
+
+  /* ── tabs ── */
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  .tab {
+    padding: 10px 18px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .15s, border-color .15s;
+  }
+  .tab.active { color: var(--text); border-bottom-color: var(--blue); }
+  .tab:hover:not(.active) { color: var(--text); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── section headers ── */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 12px;
+  }
+
+  /* ── test suites ── */
+  .suite {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .suite-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s;
+  }
+  .suite-header:hover { background: rgba(255,255,255,.03); }
+  .suite-icon { font-size: 16px; width: 20px; text-align: center; }
+  .suite-name { flex: 1; font-weight: 500; font-size: 13px; color: var(--text); }
+  .suite-counts { display: flex; gap: 8px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    border-radius: 4px; padding: 1px 7px; font-size: 11px; font-weight: 600;
+  }
+  .badge.pass { background: var(--pill-done); color: var(--green); }
+  .badge.fail { background: rgba(248,81,73,.15); color: var(--red); }
+  .badge.dur  { background: transparent; color: var(--muted); font-weight: 400; }
+  .chevron { color: var(--muted); font-size: 11px; transition: transform .2s; }
+  .suite.open .chevron { transform: rotate(90deg); }
+  .test-list { border-top: 1px solid var(--border); }
+  .test-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 16px 8px 48px;
+    border-bottom: 1px solid rgba(48,54,61,.5);
+    font-size: 12px;
+  }
+  .test-row:last-child { border-bottom: none; }
+  .test-status { width: 14px; text-align: center; }
+  .test-name { flex: 1; color: var(--muted); }
+  .test-name.passed { color: var(--text); }
+  .test-dur { color: var(--muted); font-size: 11px; }
+
+  /* ── endpoints ── */
+  .endpoint-grid { display: flex; flex-direction: column; gap: 8px; }
+  .endpoint-row {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  .method {
+    font-weight: 700; font-size: 11px; letter-spacing: .04em;
+    padding: 2px 8px; border-radius: 4px; min-width: 52px; text-align: center;
+  }
+  .method.POST { background: rgba(63,185,80,.15); color: var(--green); }
+  .method.GET  { background: rgba(88,166,255,.15); color: var(--blue); }
+  .endpoint-path { flex: 1; font-family: 'SF Mono', monospace; color: var(--text); }
+  .phase-chip {
+    font-size: 11px; padding: 2px 8px; border-radius: 10px;
+    background: var(--pill-plan); color: var(--blue);
+  }
+  .status-chip {
+    font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+  }
+  .status-chip.done    { background: var(--pill-done); color: var(--green); }
+  .status-chip.wip     { background: var(--pill-wip);  color: var(--yellow); }
+  .status-chip.planned { background: var(--pill-plan); color: var(--blue); }
+
+  /* ── phases ── */
+  .phase-list { display: flex; flex-direction: column; gap: 10px; }
+  .phase-item {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .phase-num {
+    width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+  }
+  .phase-num.done    { background: var(--pill-done); color: var(--green); border: 1px solid rgba(63,185,80,.4); }
+  .phase-num.wip     { background: var(--pill-wip);  color: var(--yellow); border: 1px solid rgba(210,153,34,.4); }
+  .phase-num.planned { background: var(--pill-plan); color: var(--blue); border: 1px solid rgba(88,166,255,.3); }
+  .phase-info { flex: 1; }
+  .phase-name { font-weight: 600; font-size: 14px; }
+  .phase-desc { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+  /* ── compliance ── */
+  .compliance-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .compliance-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .check-icon { font-size: 18px; flex-shrink: 0; }
+  .compliance-text { font-size: 13px; }
+  .compliance-sub  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ── progress bar ── */
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; background: var(--green); transition: width .5s ease; }
+
+  /* ── empty state ── */
+  .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+  .empty .icon { font-size: 32px; margin-bottom: 8px; }
+
+  /* ── loading spinner ── */
+  #loading {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: var(--bg); z-index: 999; flex-direction: column; gap: 12px;
+    font-size: 13px; color: var(--muted);
+  }
+  .spinner {
+    width: 32px; height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hidden { display: none !important; }
+</style>
+<!-- STATS_INLINE -->
+<script>window.STATS={"generatedAt":"2026-04-01T14:05:51.789Z","project":"PPSL PPI Wallet API","version":"1.0.0","tests":{"total":239,"passed":239,"failed":0,"skipped":0,"suites":27,"suitesFailed":0,"duration":3965,"testSuites":[],"lastRun":"2026-04-01T13:49:07.017Z"},"code":{"tsFiles":84,"testFiles":27,"schemaFiles":1,"linesOfCode":15150,"totalFiles":85},"endpoints":{"total":65,"done":65,"list":[{"method":"POST","path":"/v1/wallet/credit","status":"done","phase":1},{"method":"POST","path":"/v1/wallet/debit","status":"done","phase":1},{"method":"GET","path":"/v1/wallet/balance/:id","status":"done","phase":2},{"method":"GET","path":"/v1/wallet/ledger/:id","status":"done","phase":2},{"method":"POST","path":"/v1/wallet/hold","status":"done","phase":2},{"method":"POST","path":"/v1/wallet/release","status":"done","phase":2},{"method":"POST","path":"/v1/wallet/idempotency/check","status":"done","phase":2},{"method":"POST","path":"/v1/kyc/initiate","status":"done","phase":4},{"method":"POST","path":"/v1/kyc/aadhaar/otp-send","status":"done","phase":4},{"method":"POST","path":"/v1/kyc/aadhaar/otp-verify","status":"done","phase":4},{"method":"POST","path":"/v1/kyc/pan-verify","status":"done","phase":4},{"method":"POST","path":"/v1/kyc/video-kyc/session","status":"done","phase":4},{"method":"POST","path":"/v1/kyc/video-kyc/complete","status":"done","phase":4},{"method":"GET","path":"/v1/kyc/status/:wallet_id","status":"done","phase":4},{"method":"GET","path":"/v1/kyc/tier/:user_id","status":"done","phase":4},{"method":"PATCH","path":"/v1/kyc/suspend/:user_id","status":"done","phase":4},{"method":"POST","path":"/v1/limits/check","status":"done","phase":4},{"method":"GET","path":"/v1/limits/config/:kyc_tier","status":"done","phase":4},{"method":"GET","path":"/v1/limits/usage/:wallet_id","status":"done","phase":4},{"method":"POST","path":"/v1/limits/config","status":"done","phase":4},{"method":"GET","path":"/v1/compliance/wallet-types","status":"done","phase":4},{"method":"GET","path":"/v1/compliance/interop-status/:wallet_id","status":"done","phase":4},{"method":"POST","path":"/v1/saga/add-money","status":"done","phase":5},{"method":"POST","path":"/v1/saga/merchant-pay","status":"done","phase":5},{"method":"POST","path":"/v1/saga/p2p-transfer","status":"done","phase":5},{"method":"POST","path":"/v1/saga/wallet-to-bank","status":"done","phase":5},{"method":"POST","path":"/v1/saga/bill-pay","status":"done","phase":5},{"method":"POST","path":"/v1/saga/refund","status":"done","phase":5},{"method":"GET","path":"/v1/saga/:saga_id","status":"done","phase":5},{"method":"GET","path":"/v1/nodal/balance","status":"done","phase":6},{"method":"POST","path":"/v1/nodal/recon/trigger","status":"done","phase":6},{"method":"POST","path":"/v1/nodal/debit","status":"done","phase":6},{"method":"POST","path":"/v1/nodal/credit","status":"done","phase":6},{"method":"GET","path":"/v1/nodal/statement/:date","status":"done","phase":6},{"method":"GET","path":"/v1/nodal/recon/status/:date","status":"done","phase":6},{"method":"GET","path":"/v1/nodal/recon/breaks/:date","status":"done","phase":6},{"method":"POST","path":"/v1/upi/vpa/create","status":"done","phase":7},{"method":"GET","path":"/v1/upi/vpa/:wallet_id","status":"done","phase":7},{"method":"POST","path":"/v1/upi/collect","status":"done","phase":7},{"method":"POST","path":"/v1/upi/third-party/link/initiate","status":"done","phase":7},{"method":"POST","path":"/v1/upi/third-party/link/confirm","status":"done","phase":7},{"method":"POST","path":"/v1/upi/third-party/link/revoke","status":"done","phase":7},{"method":"DELETE","path":"/v1/upi/vpa/:wallet_id","status":"done","phase":7},{"method":"POST","path":"/v1/upi/mandate/create","status":"done","phase":7},{"method":"GET","path":"/v1/upi/mandate/list/:wallet_id","status":"done","phase":7},{"method":"DELETE","path":"/v1/upi/mandate/:mandate_id","status":"done","phase":7},{"method":"POST","path":"/v1/reports/ctr/aggregate","status":"done","phase":8},{"method":"GET","path":"/v1/reports/ctr/pending","status":"done","phase":8},{"method":"POST","path":"/v1/reports/str/raise","status":"done","phase":8},{"method":"POST","path":"/v1/reports/str/:id/file","status":"done","phase":8},{"method":"GET","path":"/v1/reports/str/pending","status":"done","phase":8},{"method":"POST","path":"/v1/reports/rbi-monthly","status":"done","phase":8},{"method":"GET","path":"/v1/reports/status/:report_id","status":"done","phase":8},{"method":"GET","path":"/v1/reports/audit-trail/:wallet_id","status":"done","phase":8},{"method":"POST","path":"/v1/reports/edd-flag/:user_id","status":"done","phase":8},{"method":"POST","path":"/v1/wallet/lifecycle/suspend","status":"done","phase":9},{"method":"POST","path":"/v1/wallet/lifecycle/unsuspend","status":"done","phase":9},{"method":"POST","path":"/v1/wallet/lifecycle/reactivate/initiate","status":"done","phase":9},{"method":"POST","path":"/v1/wallet/lifecycle/reactivate/confirm","status":"done","phase":9},{"method":"POST","path":"/v1/wallet/lifecycle/close","status":"done","phase":9},{"method":"GET","path":"/v1/wallet/lifecycle/:wallet_id/history","status":"done","phase":9},{"method":"POST","path":"/v1/wallet/lifecycle/process-dormancy","status":"done","phase":9},{"method":"POST","path":"/v1/wallet/lifecycle/process-expiry","status":"done","phase":9},{"method":"GET","path":"/v1/wallet/status/:wallet_id","status":"done","phase":9},{"method":"GET","path":"/v1/wallet/expiry/:wallet_id","status":"done","phase":9}]},"phases":[{"id":1,"name":"Foundation","status":"done","endpoints":["credit","debit"]},{"id":2,"name":"Wallet Core","status":"done","endpoints":["balance","ledger","hold","release","idempotency/check"]},{"id":3,"name":"Compliance Tests","status":"done","endpoints":[]},{"id":4,"name":"KYC & Limits","status":"done","endpoints":["kyc/initiate","kyc/aadhaar/otp-send","kyc/aadhaar/otp-verify","kyc/pan-verify","kyc/video-kyc/session","kyc/video-kyc/complete","kyc/status/:wallet_id","kyc/tier/:user_id","kyc/suspend/:user_id","limits/check","limits/config/:kyc_tier","limits/usage/:wallet_id","limits/config","compliance/wallet-types","compliance/interop-status/:wallet_id"]},{"id":5,"name":"Saga Orchestrator","status":"done","endpoints":["saga/add-money","saga/merchant-pay","saga/p2p-transfer","saga/wallet-to-bank","saga/bill-pay","saga/refund","saga/:saga_id"]},{"id":6,"name":"Nodal & Escrow","status":"done","endpoints":["nodal/balance","nodal/recon/trigger","nodal/debit","nodal/credit","nodal/statement/:date","nodal/recon/status/:date","nodal/recon/breaks/:date"]},{"id":7,"name":"UPI / VPA","status":"done","endpoints":["upi/vpa/create","upi/vpa/:wallet_id","upi/collect","upi/third-party/link/initiate","upi/third-party/link/confirm","upi/third-party/link/revoke","upi/mandate/create","upi/mandate/list/:wallet_id","upi/mandate/:mandate_id"]},{"id":8,"name":"Compliance / FIU","status":"done","endpoints":["reports/ctr/aggregate","reports/ctr/pending","reports/str/raise","reports/str/:id/file","reports/str/pending","reports/rbi-monthly","reports/status/:report_id","reports/audit-trail/:wallet_id","reports/edd-flag/:user_id"]},{"id":9,"name":"Wallet Lifecycle","status":"done","endpoints":["wallet/lifecycle/suspend","wallet/lifecycle/unsuspend","wallet/lifecycle/reactivate/initiate","wallet/lifecycle/reactivate/confirm","wallet/lifecycle/close","wallet/lifecycle/:wallet_id/history","wallet/lifecycle/process-dormancy","wallet/lifecycle/process-expiry","wallet/status/:wallet_id","wallet/expiry/:wallet_id"]}],"compliance":{"ledgerFirst":true,"appendOnly":true,"bigIntPaise":true,"idempotencyUnique":true,"serializableTx":true,"rbiLimits":true}};</script>
+<!-- /STATS_INLINE -->
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  Loading dashboard...
+</div>
+
+<header>
+  <div class="logo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="2" y="7" width="20" height="14" rx="2"/>
+      <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+      <line x1="12" y1="12" x2="12" y2="16"/>
+      <line x1="10" y1="14" x2="14" y2="14"/>
+    </svg>
+    PPSL PPI Wallet &mdash; Build Dashboard
+  </div>
+  <div style="display:flex;align-items:center;gap:16px">
+    <span class="last-updated" id="lastUpdated">-</span>
+    <div class="status-badge" id="statusBadge">
+      <span class="dot"></span>
+      <span id="statusText">Loading...</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="cards" id="cards"></div>
+
+  <div style="margin-bottom:24px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+      <span style="font-size:12px;color:var(--muted)">ENDPOINT PROGRESS</span>
+      <span style="font-size:12px;color:var(--muted)" id="epProgress"></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-panel="tests">Tests</button>
+    <button class="tab" data-panel="endpoints">Endpoints</button>
+    <button class="tab" data-panel="phases">Phases</button>
+    <button class="tab" data-panel="compliance">Compliance</button>
+  </div>
+
+  <div id="panel-tests"      class="panel active"></div>
+  <div id="panel-endpoints"  class="panel"></div>
+  <div id="panel-phases"     class="panel"></div>
+  <div id="panel-compliance" class="panel"></div>
+</main>
+
+<script>
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+  });
+});
+
+function fmt(ms) {
+  if (ms < 1000) return ms + 'ms';
+  return (ms / 1000).toFixed(1) + 's';
+}
+function fmtDate(iso) {
+  if (!iso) return '-';
+  var d = new Date(iso);
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+       + ' ' + d.toLocaleDateString([], { month: 'short', day: 'numeric' });
+}
+function animateCount(el, target) {
+  var start = 0, duration = 600, startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    var progress = Math.min((ts - startTime) / duration, 1);
+    el.textContent = Math.round(start + (target - start) * progress);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  }
+  requestAnimationFrame(step);
+}
+
+function renderCards(s) {
+  var passRate = s.tests.total > 0 ? Math.round((s.tests.passed / s.tests.total) * 100) : 0;
+  var cards = [
+    { label:'Tests Passing', value: s.tests.passed,   sub: 'of ' + s.tests.total + ' total',        color:'green'  },
+    { label:'Test Suites',   value: s.tests.suites,   sub: s.tests.suitesFailed + ' failed',         color:'blue'   },
+    { label:'Pass Rate',     value: passRate + '%',    sub: s.tests.failed + ' failing',              color: s.tests.failed > 0 ? 'red' : 'green', noAnim: true },
+    { label:'Source Files',  value: s.code.totalFiles, sub: s.code.linesOfCode.toLocaleString() + ' lines', color:'blue' },
+    { label:'Endpoints',     value: s.endpoints.done,  sub: 'of ' + s.endpoints.total + ' planned',   color:'purple' },
+    { label:'Test Duration', value: fmt(s.tests.duration), sub: 'last run',                           color:'yellow', noAnim: true },
+  ];
+  document.getElementById('cards').innerHTML = cards.map(function(c) {
+    return '<div class="card"><div class="card-label">' + c.label + '</div>' +
+           '<div class="card-value ' + c.color + '" data-raw="' + (typeof c.value === 'number' ? c.value : '') + '">' + c.value + '</div>' +
+           '<div class="card-sub">' + c.sub + '</div></div>';
+  }).join('');
+  document.querySelectorAll('.card-value[data-raw]').forEach(function(el) {
+    var raw = parseInt(el.dataset.raw);
+    if (!isNaN(raw)) animateCount(el, raw);
+  });
+}
+
+function renderTests(s) {
+  var el = document.getElementById('panel-tests');
+  if (!s.tests.testSuites.length) {
+    el.innerHTML = '<div class="empty"><div class="icon">&#x1F9EA;</div>No test results yet &mdash; run <code>npm test</code> to populate.</div>';
+    return;
+  }
+  el.innerHTML = '<div class="section-title">Test Suites</div>' +
+    s.tests.testSuites.map(function(suite, i) {
+      return '<div class="suite" id="suite-' + i + '">' +
+        '<div class="suite-header" onclick="toggleSuite(' + i + ')">' +
+        '<span class="suite-icon">' + (suite.status === 'passed' ? '&#x2705;' : '&#x274C;') + '</span>' +
+        '<span class="suite-name">' + suite.name + '</span>' +
+        '<span class="suite-counts">' +
+        (suite.passed ? '<span class="badge pass">&#x2713; ' + suite.passed + '</span>' : '') +
+        (suite.failed ? '<span class="badge fail">&#x2717; ' + suite.failed + '</span>' : '') +
+        '<span class="badge dur">' + fmt(suite.duration) + '</span>' +
+        '</span>' +
+        '<span class="chevron">&#x25B6;</span>' +
+        '</div>' +
+        '<div class="test-list" style="display:none">' +
+        suite.tests.map(function(t) {
+          return '<div class="test-row">' +
+            '<span class="test-status">' + (t.status === 'passed' ? '&#x2713;' : '&#x2717;') + '</span>' +
+            '<span class="test-name ' + t.status + '">' + t.name + '</span>' +
+            '<span class="test-dur">' + fmt(t.duration) + '</span>' +
+            '</div>';
+        }).join('') +
+        '</div></div>';
+    }).join('');
+}
+window.toggleSuite = function(i) {
+  var suite = document.getElementById('suite-' + i);
+  var list  = suite.querySelector('.test-list');
+  var open  = suite.classList.toggle('open');
+  list.style.display = open ? 'block' : 'none';
+};
+
+function renderEndpoints(s) {
+  var el = document.getElementById('panel-endpoints');
+  el.innerHTML = '<div class="section-title">API Endpoints</div><div class="endpoint-grid">' +
+    s.endpoints.list.map(function(e) {
+      var statusLabel = e.status === 'done' ? '&#x2713; Done' : e.status === 'wip' ? '&#x2699; In Progress' : '&#x25CB; Planned';
+      return '<div class="endpoint-row">' +
+        '<span class="method ' + e.method + '">' + e.method + '</span>' +
+        '<span class="endpoint-path">' + e.path + '</span>' +
+        '<span class="phase-chip">Phase ' + e.phase + '</span>' +
+        '<span class="status-chip ' + e.status + '">' + statusLabel + '</span>' +
+        '</div>';
+    }).join('') + '</div>';
+}
+
+function renderPhases(s) {
+  var phaseDescs = {
+    1: 'Scaffold, DB schema, credit & debit endpoints',
+    2: 'Balance, ledger, hold/release, idempotency check',
+    3: 'Compliance tests — ledger-first ordering proofs',
+    4: 'RBI KYC tier enforcement & monthly load limits',
+    5: 'Saga-orchestrated money movement — all 6 transaction types',
+    6: 'PA-PG escrow + PPI nodal balance, float utilisation alerts, recon',
+    7: 'Admin endpoints — freeze, audit, reporting',
+  };
+  var el = document.getElementById('panel-phases');
+  el.innerHTML = '<div class="section-title">Project Phases</div><div class="phase-list">' +
+    s.phases.map(function(p) {
+      var numClass = p.status === 'done' ? 'done' : p.status === 'in-progress' ? 'wip' : 'planned';
+      var numLabel = p.status === 'done' ? '&#x2713;' : p.id;
+      var statusLabel = p.status === 'done' ? '&#x2713; Complete'
+        : p.status === 'in-progress' ? '&#x2699; In Progress' : '&#x25CB; Planned';
+      var chipClass = p.status === 'in-progress' ? 'wip' : p.status;
+      return '<div class="phase-item">' +
+        '<div class="phase-num ' + numClass + '">' + numLabel + '</div>' +
+        '<div class="phase-info">' +
+        '<div class="phase-name">Phase ' + p.id + ': ' + p.name + '</div>' +
+        '<div class="phase-desc">' + (phaseDescs[p.id] || '') + '</div>' +
+        '</div>' +
+        '<span class="status-chip ' + chipClass + '">' + statusLabel + '</span>' +
+        '</div>';
+    }).join('') + '</div>';
+}
+
+function renderCompliance(s) {
+  var rules = [
+    { key:'ledgerFirst',       label:'Ledger-First Pattern',      sub:'Ledger write happens before HTTP response' },
+    { key:'appendOnly',        label:'Append-Only Ledger',        sub:'DB-level no_update + no_delete rules' },
+    { key:'bigIntPaise',       label:'BigInt Paise Only',         sub:'No DECIMAL/FLOAT — all amounts as BIGINT' },
+    { key:'idempotencyUnique', label:'Idempotency Unique Index',  sub:'Duplicate keys return original result' },
+    { key:'serializableTx',    label:'SERIALIZABLE Transactions', sub:'FOR UPDATE row lock prevents races' },
+    { key:'rbiLimits',         label:'RBI PPI Limits Enforced',   sub:'Min KYC Rs.10k / Full KYC Rs.2L max balance' },
+  ];
+  var el = document.getElementById('panel-compliance');
+  el.innerHTML = '<div class="section-title">RBI Compliance Rules</div><div class="compliance-grid">' +
+    rules.map(function(r) {
+      var ok = s.compliance[r.key];
+      return '<div class="compliance-item">' +
+        '<span class="check-icon">' + (ok ? '&#x2705;' : '&#x274C;') + '</span>' +
+        '<div><div class="compliance-text">' + r.label + '</div>' +
+        '<div class="compliance-sub">' + r.sub + '</div></div>' +
+        '</div>';
+    }).join('') + '</div>';
+}
+
+function render(s) {
+  document.getElementById('lastUpdated').textContent = 'Updated ' + fmtDate(s.generatedAt);
+
+  var allPass = s.tests.failed === 0 && s.tests.total > 0;
+  var badge = document.getElementById('statusBadge');
+  var dot   = badge.querySelector('.dot');
+  if (!allPass && s.tests.total > 0) {
+    badge.style.background  = 'rgba(248,81,73,.15)';
+    badge.style.color       = 'var(--red)';
+    badge.style.borderColor = 'rgba(248,81,73,.3)';
+    dot.style.background    = 'var(--red)';
+  } else {
+    badge.style.background  = '';
+    badge.style.color       = '';
+    badge.style.borderColor = '';
+    dot.style.background    = '';
+  }
+  document.getElementById('statusText').textContent =
+    s.tests.total === 0 ? 'No tests run yet'
+    : allPass ? s.tests.passed + ' tests passing'
+    : s.tests.failed + ' failing';
+
+  var pct = s.endpoints.total > 0 ? Math.round((s.endpoints.done / s.endpoints.total) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('epProgress').textContent   = s.endpoints.done + '/' + s.endpoints.total + ' (' + pct + '%)';
+
+  renderCards(s);
+  renderTests(s);
+  renderEndpoints(s);
+  renderPhases(s);
+  renderCompliance(s);
+
+  document.getElementById('loading').classList.add('hidden');
+}
+
+// Stats are injected inline by scripts/update-dashboard.js — no fetch needed.
+if (window.STATS) {
+  render(window.STATS);
+} else {
+  document.getElementById('loading').innerHTML =
+    '<div style="color:var(--muted);font-size:13px;text-align:center">' +
+    '<div style="font-size:32px;margin-bottom:8px">&#x1F4CA;</div>' +
+    'Run <code style="background:var(--surface);padding:2px 6px;border-radius:4px">node scripts/update-dashboard.js</code> to populate the dashboard.' +
+    '</div>';
+}
+</script>
+</body>
+</html>
