@@ -178,21 +178,40 @@ npx tsc -b && npx vite build && npx gh-pages -d dist
 
 ## Documentation
 
-This platform repo contains all specs and reference documents:
+All source `.docx` documents have been converted to markdown and organized in `docs/`:
+
+### Product & Architecture
+
+| File | Description |
+|------|-------------|
+| `docs/product-document.md` | Product overview and vision |
+| `docs/product-requirements-v1.md` | PRD v1.0 — original requirements |
+| `docs/product-requirements.md` | PRD v1.1 — expanded with RBI compliance |
+| `docs/architecture.md` | Full system architecture |
+| `docs/engineering-brief.md` | API spec, DB schema, escrow reconciliation engine |
+| `docs/epic-breakdown.md` | Sprint-level epic breakdown |
+| `docs/admin-dashboard-prd.md` | Admin dashboard requirements |
+
+### Compliance & Strategy
+
+| File | Description |
+|------|-------------|
+| `docs/compliance-gap-analysis-v1.md` | Initial RBI/PMLA compliance gap analysis |
+| `docs/compliance-gap-analysis-v2.md` | Updated compliance gaps with remediation plans |
+| `docs/competitive-benchmark.md` | PPSL vs PhonePe, Amazon Pay, Airtel wallets |
+| `docs/partner-bank-evaluation.md` | Yes Bank, IndusInd, RBL, IDFC First evaluation |
+| `docs/claude-code-pm-guide.md` | Claude Code PM guide for engineering teams |
+
+### Claude AI Context
 
 | File | Description |
 |------|-------------|
 | `CLAUDE.md` | Ecosystem overview, conventions, architecture decisions |
 | `PROMPT.md` | Comprehensive prompt to recreate the entire platform |
-| `docs/architecture.md` | Full system architecture (31K) |
-| `docs/product-requirements.md` | PRD v1.1 with RBI compliance (50K) |
-| `docs/compliance-gap-analysis.md` | 76 compliance gaps with remediation (40K) |
-| `docs/admin-dashboard-prd.md` | Admin dashboard requirements (59K) |
 | `.claude/rules/compliance.md` | KYC tiers, Load Guard, AML thresholds |
 | `.claude/rules/sub-wallets.md` | All 5 wallet types, cascade spend logic |
 | `.claude/rules/data-models.md` | TypeScript interfaces, localStorage keys |
-
-Original source documents (`.docx`) are also included for reference.
+| `.claude/settings.json` | Shared Claude Code team permissions |
 
 ## Tech Stack
 
