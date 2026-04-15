@@ -8,8 +8,8 @@ Multi-repo workspace for an RBI-regulated Prepaid Payment Instrument (PPI) Walle
 |------|------|------|---------|
 | `paytm-wallet-app/` | React 19 + Vite + Tailwind | 5173 | Consumer wallet UI (mobile-first) |
 | `admin-dashboard/` | React 19 + Vite + Ant Design | 5174 | Admin operations dashboard (desktop) |
-| `mcp/` | Node.js + Zod | stdio | 39 Claude AI tools via MCP protocol |
-| `api-server/` | Express.js + Claude API | 3001 | REST API (chat, KYC alerts, load guard, sub-wallets) |
+| `mcp/` | Node.js + Zod | stdio | 49 Claude AI tools via MCP protocol |
+| `api-server/` | Express.js + Claude API | 3001 | REST API (chat, KYC alerts, load guard, sub-wallets, AI agents) |
 | `ppi-wallet-api-deploy/` | Express.js | Render | Production deploy of api-server |
 
 ## Quick Start
@@ -94,6 +94,27 @@ git clone https://github.com/gaurav2sheth/ppi-wallet-api-deploy.git ppi-wallet-a
 - **NCMC = isolated balance**: ₹3K cap, transit-only, never cascades to main wallet.
 - **localStorage versioning**: Sub-wallet key is `__mock_sub_wallets_v2` to force re-seed on schema changes.
 
+## AI Agents
+
+Three autonomous AI agents power the platform's operations:
+
+| Agent | Architecture | File | Trigger |
+|-------|-------------|------|---------|
+| KYC Upgrade Agent | Fixed 7-step loop (PERCEIVE→REASON→PLAN→ACT→OBSERVE→FOLLOW-UP→SUMMARY) | `mcp/agents/kyc-upgrade-agent.js` | Cron 8 AM IST / manual |
+| Customer Support Agent | Dynamic 5-step (UNDERSTAND→INVESTIGATE→RESOLVE→RESPOND→ESCALATE) | `mcp/agents/customer-support-agent.js` | User chat message |
+| KYC Alert Service | 4-step pipeline (FETCH→GENERATE→SIMULATE→SUMMARY) | `mcp/services/kyc-alert-service.js` | Cron 9 AM IST / manual |
+
+Supporting modules:
+- `mcp/agents/escalation-manager.js` — Shared in-memory escalation store (used by both agents)
+- `mcp/agents/support-ticket-manager.js` — Ticket store with SLA tracking (HIGH=1hr, MEDIUM=2hr, LOW=4hr)
+- `mcp/services/scheduler.js` — Cron orchestration for all 3 jobs
+
+**Models used:**
+- `claude-sonnet-4-20250514` — Intent classification, KYC decision reasoning
+- `claude-haiku-4-5-20251001` — SMS/notification drafting, response generation, ops summaries
+
+All Claude API calls have keyword/template fallback. Agents work at $0 cost without an API key.
+
 ## Reference Documents
 
 See `docs/` for detailed specs (all converted from original .docx to markdown):
@@ -109,6 +130,7 @@ See `docs/` for detailed specs (all converted from original .docx to markdown):
 - `docs/competitive-benchmark.md` — PPSL vs competitors
 - `docs/partner-bank-evaluation.md` — Partner bank evaluation matrix
 - `docs/claude-code-pm-guide.md` — Claude Code PM guide
+- `docs/ai-agents.md` — AI agents architecture, API endpoints, data flows, cost estimates
 
 See `.claude/rules/` for auto-loaded context:
 - `rules/compliance.md` — RBI limits, KYC states, Load Guard rules

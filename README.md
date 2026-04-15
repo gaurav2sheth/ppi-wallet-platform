@@ -1,6 +1,6 @@
 # PPI Wallet Platform
 
-A production-grade **Prepaid Payment Instrument (PPI) Wallet** platform built for RBI compliance, featuring a consumer mobile wallet, an admin operations dashboard, an AI-powered API server, and 39 Claude AI tools via MCP.
+A production-grade **Prepaid Payment Instrument (PPI) Wallet** platform built for RBI compliance, featuring a consumer mobile wallet, an admin operations dashboard, an AI-powered API server, 49 Claude AI tools via MCP, and 3 autonomous AI agents for KYC compliance and customer support.
 
 ## Live Demo
 
@@ -26,14 +26,15 @@ A production-grade **Prepaid Payment Instrument (PPI) Wallet** platform built fo
          │   Express API       │
          │   Claude AI + MCP   │
          │   Port 3001         │
-         └─────────────────────┘
-                    ▲
+         └──────────┬──────────┘
                     │
-         ┌─────────────────────┐
-         │  MCP Server         │
-         │  39 Tools via Zod   │
-         │  stdio transport    │
-         └─────────────────────┘
+         ┌──────────┴──────────┐
+         │                     │
+┌────────▼────────┐  ┌────────▼────────┐
+│  MCP Server     │  │  AI Agents      │
+│  49 Tools (Zod) │  │  KYC + Support  │
+│  stdio transport│  │  Cron Scheduler │
+└─────────────────┘  └─────────────────┘
 ```
 
 **3-tier API fallback** — The wallet app always works, even offline:
@@ -61,7 +62,7 @@ git clone https://github.com/gaurav2sheth/ppi-wallet-api-deploy.git ppi-wallet-a
 |-----------|------|------|---------|
 | `paytm-wallet-app/` | [ppi-wallet-app](https://github.com/gaurav2sheth/ppi-wallet-app) | React 19, Vite 8, Tailwind, Zustand | Consumer wallet (mobile-first) |
 | `admin-dashboard/` | [ppi-wallet-admin-dashboard](https://github.com/gaurav2sheth/ppi-wallet-admin-dashboard) | React 19, Vite 6, Ant Design 5, ECharts | Admin dashboard (desktop) |
-| `mcp/` | [ppi-wallet-mcp](https://github.com/gaurav2sheth/ppi-wallet-mcp) | Node.js, Zod | 39 Claude AI tools via MCP |
+| `mcp/` | [ppi-wallet-mcp](https://github.com/gaurav2sheth/ppi-wallet-mcp) | Node.js, Zod | 49 Claude AI tools + 3 AI agents via MCP |
 | `api-server/` | — | Express.js, Claude API | REST API (local dev) |
 | `ppi-wallet-api-deploy/` | [ppi-wallet-api-deploy](https://github.com/gaurav2sheth/ppi-wallet-api-deploy) | Express.js | Production API on Render |
 
@@ -107,15 +108,17 @@ cd api-server && npm install && npm run dev
 - **Rewards** — Scratch cards + cashback
 - **KYC Verification** — Min-KYC → Full-KYC upgrade flow
 - **Notifications** — Real-time alerts for transactions, KYC, limits
-- **AI Chat** — Claude-powered assistant with MCP tool access
+- **AI Support Chat** — Claude-powered support agent with intent classification, dynamic tool selection, session management, and auto-escalation
+- **My Support Tickets** — View ticket status, SLA deadlines, resolution notes
 
-### Admin Dashboard (6 modules)
+### Admin Dashboard (7 modules)
 
 - **Dashboard** — KPI cards, transaction trends (ECharts), AI-powered alerts
 - **User Management** — Search, filter, suspend users, view detailed profiles
 - **Transaction Monitoring** — Real-time feed, status filtering, dispute management
-- **KYC Management** — Verification queue, approve/reject with audit trail
+- **KYC Management** — Verification queue, approve/reject with audit trail, KYC Upgrade Agent panel
 - **Benefits Management** — Sub-wallet bulk loading, employer benefit administration
+- **Support Operations** — Live support agent metrics, open tickets with SLA tracking, escalations, analytics
 - **Settings** — RBAC role management (6 roles, 12 permissions)
 
 ## Sub-Wallet System
@@ -131,6 +134,58 @@ Five corporate benefit wallet types, each with distinct business rules:
 | ⛽ Fuel | ₹2,500/month | Employer only | HP, IOCL, BPCL, Shell | Category-restricted |
 
 **Cascade spend logic**: Merchant Pay auto-detects category → checks specific sub-wallet → Gift as fallback → split across sub-wallet + main wallet if needed.
+
+## AI Agents
+
+Three autonomous AI agents handle operational workflows without human intervention:
+
+### KYC Upgrade Agent (Fixed 7-Step Loop)
+
+```
+PERCEIVE → REASON → PLAN → ACT → OBSERVE → FOLLOW-UP → SUMMARY
+```
+
+- Detects users with KYC expiring within 7 days
+- Claude Sonnet decides priority (P1-P4) and intervention strategy per user
+- Claude Haiku drafts personalised SMS (<160 chars) and in-app notifications
+- Observes user response and auto-escalates unresponsive high-value accounts
+- Runs daily at 8 AM IST via cron, with 6-hourly follow-up checks
+- **File:** `mcp/agents/kyc-upgrade-agent.js`
+
+### Customer Support Agent (Dynamic Tool Selection)
+
+```
+UNDERSTAND → INVESTIGATE → RESOLVE → RESPOND → ESCALATE (if needed)
+```
+
+- 13 intent types: balance, payments, transactions, KYC, sub-wallets, rewards, escalation
+- Claude Sonnet classifies intent with entity extraction and sentiment detection
+- Dynamically selects wallet tools based on intent (e.g., PAYMENT_BLOCKED calls 4 tools)
+- Claude Haiku drafts sentiment-matched responses (empathetic for frustrated users)
+- Auto-escalates after 2 unresolved same-intent turns or explicit request
+- Session management with 30-minute expiry
+- SLA-tracked tickets: HIGH (1hr), MEDIUM (2hr), LOW (4hr)
+- **File:** `mcp/agents/customer-support-agent.js`
+
+### Shared Infrastructure
+
+| Module | File | Purpose |
+|--------|------|---------|
+| Escalation Manager | `mcp/agents/escalation-manager.js` | Shared ops escalation store (both agents) |
+| Ticket Manager | `mcp/agents/support-ticket-manager.js` | SLA-tracked ticket CRUD |
+| Scheduler | `mcp/services/scheduler.js` | Cron orchestration (3 jobs) |
+| KYC Alert Service | `mcp/services/kyc-alert-service.js` | Alert message generation pipeline |
+
+### Claude Model Cost
+
+| Operation | Cost |
+|-----------|------|
+| 1 support chat | ~$0.003 |
+| 100 support chats | ~$0.29 |
+| 1 KYC agent run (4 users) | ~$0.01 |
+| Fallback mode (no API key) | $0.00 |
+
+> Full documentation: [`docs/ai-agents.md`](docs/ai-agents.md)
 
 ## RBI Compliance
 
@@ -150,7 +205,7 @@ All regulatory rules are enforced at every transaction:
 
 ## Testing
 
-Both frontends have comprehensive test suites using Vitest + React Testing Library:
+All projects have comprehensive test suites using Vitest + React Testing Library:
 
 ```bash
 # Wallet app — 94 tests
@@ -158,9 +213,12 @@ cd paytm-wallet-app && npm test
 
 # Admin dashboard — 111 tests
 cd admin-dashboard && npm test
+
+# MCP agents — 59 tests
+cd mcp && npx vitest run
 ```
 
-**205 total tests** covering utilities, mock data layer, Zustand stores, components, pages, RBAC, and auth guards.
+**264 total tests** covering utilities, mock data layer, Zustand stores, components, pages, RBAC, auth guards, and AI agent functions (intent classification, escalation, ticket management, notification lifecycle).
 
 ## Build & Deploy
 
@@ -202,6 +260,12 @@ All source `.docx` documents have been converted to markdown and organized in `d
 | `docs/partner-bank-evaluation.md` | Yes Bank, IndusInd, RBL, IDFC First evaluation |
 | `docs/claude-code-pm-guide.md` | Claude Code PM guide for engineering teams |
 
+### AI Agents
+
+| File | Description |
+|------|-------------|
+| `docs/ai-agents.md` | Comprehensive agent documentation — architecture, API endpoints, data flows, Claude model usage, cost estimates, fallback strategies, business rules |
+
 ### Claude AI Context
 
 | File | Description |
@@ -220,7 +284,8 @@ All source `.docx` documents have been converted to markdown and organized in `d
 | Frontend (Wallet) | React 19, TypeScript, Vite 8, Tailwind CSS 4, Zustand 5 |
 | Frontend (Admin) | React 19, TypeScript, Vite 6, Ant Design 5, ECharts 5, Zustand 5 |
 | Backend | Express.js, Anthropic Claude API |
-| AI Tools | MCP Protocol, Zod validation, 39 tools across 6 categories |
+| AI Tools | MCP Protocol, Zod validation, 49 tools across 6 categories |
+| AI Agents | KYC Upgrade Agent (Sonnet+Haiku), Customer Support Agent (Sonnet+Haiku), KYC Alert Service (Haiku) |
 | Testing | Vitest, React Testing Library, jsdom |
 | Deployment | GitHub Pages (frontends), Render (API) |
 | State | Zustand with localStorage persistence |
