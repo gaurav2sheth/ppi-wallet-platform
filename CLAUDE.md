@@ -91,7 +91,8 @@ git clone https://github.com/gaurav2sheth/ppi-wallet-api-deploy.git ppi-wallet-a
 - **Saga pattern** for transactions: Amount → PIN → API call → Result screen (success/retry).
 - **Sub-wallet balances included in RBI cap**: ₹1L limit = main wallet + all sub-wallet balances combined.
 - **FASTag = security deposit model**: Tolls deduct from main wallet; deposit is last resort.
-- **NCMC = isolated balance**: ₹3K cap, transit-only, never cascades to main wallet.
+- **NCMC = isolated balance**: ₹3K cap, transit-only, never cascades to main wallet. Supports direct load from UPI/DC/NB (bypasses main wallet).
+- **AI context sync**: Support agent receives actual app balance + transactions from the frontend (not server mock data), ensuring AI responses match what the user sees.
 - **localStorage versioning**: Sub-wallet key is `__mock_sub_wallets_v2` to force re-seed on schema changes.
 
 ## AI Agents

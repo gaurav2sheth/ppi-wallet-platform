@@ -128,8 +128,8 @@ Five corporate benefit wallet types, each with distinct business rules:
 | Type | Cap | Load Source | Eligible Merchants | Special Rules |
 |------|-----|-------------|-------------------|---------------|
 | 🍱 Food | ₹3,000/month | Employer only | Restaurants, Swiggy, Zomato | Direct deduction |
-| 🚇 NCMC Transit | ₹3,000 balance | Self-load from main | Metro, Bus, Local train | **Isolated balance** — no cascade to main wallet |
-| 🛣️ FASTag | ₹300/vehicle | Add Money → main wallet | Toll plazas | **Security deposit model** — tolls deduct from main wallet first |
+| 🚇 NCMC Transit | ₹3,000 balance | Main Wallet, UPI, DC, NB | Metro, Bus, Local train | **Isolated balance** — no cascade to main wallet. Direct UPI/bank load bypasses main wallet. |
+| 🛣️ FASTag | ₹300/vehicle | UPI, DC, NB → main wallet | Toll plazas | **Security deposit model** — tolls deduct from main wallet first. Payment source selectable. |
 | 🎁 Gift | No cap | Self-load + employer | Universal | Expiry date, shows EXPIRED badge |
 | ⛽ Fuel | ₹2,500/month | Employer only | HP, IOCL, BPCL, Shell | Category-restricted |
 
@@ -165,6 +165,7 @@ UNDERSTAND → INVESTIGATE → RESOLVE → RESPOND → ESCALATE (if needed)
 - Auto-escalates after 2 unresolved same-intent turns or explicit request
 - Session management with 30-minute expiry
 - SLA-tracked tickets: HIGH (1hr), MEDIUM (2hr), LOW (4hr)
+- **Context sync**: Frontend sends actual balance + transactions with each request — AI responses always match what the user sees in the app
 - **File:** `mcp/agents/customer-support-agent.js`
 
 ### Shared Infrastructure

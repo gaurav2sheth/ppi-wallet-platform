@@ -276,20 +276,22 @@ Uses last 3 conversation turns as context for accurate classification.
 
 **Fallback:** `keywordIntentMatch()` — regex-based classification with 0.6 confidence.
 
-### Step 2: INVESTIGATE — `investigate(userId, intentResult)`
+### Step 2: INVESTIGATE — `investigate(userId, intentResult, context)`
 
-Dynamically selects and calls wallet tools based on the detected intent:
+Dynamically selects and calls wallet tools based on the detected intent.
+
+**Context-aware data sourcing:** When the frontend sends a `context` object (balance, transactions), the agent uses that real app data instead of server-side mock data. This ensures AI responses always match what the user sees in the app. The `context` parameter is optional — server-side mock data is the fallback.
 
 | Intent | Tools Called |
 |--------|-------------|
-| BALANCE_QUERY | `getWalletBalance()`, `getSubWalletData()` |
-| PAYMENT_BLOCKED | `getTransactionHistory()`, `getWalletBalance()`, `getSubWalletData()`, `getBlockedAttempts()` |
-| TRANSACTION_INQUIRY | `getTransactionHistory()`, optionally `searchTransactions()` |
-| KYC_STATUS / KYC_UPGRADE_HELP | `getUserProfile()`, `getWalletBalance()`, `getEscalations()` |
-| SUB_WALLET_QUERY | `getSubWalletData()`, `getWalletBalance()` |
-| MERCHANT_ELIGIBILITY | `getSubWalletData()`, `getWalletBalance()` |
-| REWARD_QUERY | `getWalletBalance()`, `getTransactionHistory()`, `getNotifications()` |
-| ESCALATION_REQUEST | `getUserProfile()`, `getWalletBalance()` |
+| BALANCE_QUERY | `clientContext:balance` OR `getWalletBalance()`, `getSubWalletData()` |
+| PAYMENT_BLOCKED | `clientContext:balance+transactions` OR `getTransactionHistory()` + `getWalletBalance()`, `getSubWalletData()`, `getBlockedAttempts()` |
+| TRANSACTION_INQUIRY | `clientContext:transactions` OR `getTransactionHistory()`, optionally `searchTransactions()` |
+| KYC_STATUS / KYC_UPGRADE_HELP | `getUserProfile()`, `clientContext:balance` OR `getWalletBalance()`, `getEscalations()` |
+| SUB_WALLET_QUERY | `getSubWalletData()`, `clientContext:balance` OR `getWalletBalance()` |
+| MERCHANT_ELIGIBILITY | `getSubWalletData()`, `clientContext:balance` OR `getWalletBalance()` |
+| REWARD_QUERY | `clientContext:balance+transactions` OR `getWalletBalance()` + `getTransactionHistory()`, `getNotifications()` |
+| ESCALATION_REQUEST | `getUserProfile()`, `clientContext:balance` OR `getWalletBalance()` |
 
 **Root cause analysis:**
 - Identifies specific blockers (e.g., `INSUFFICIENT_BALANCE`, `LOAD_GUARD`, `KYC_EXPIRED`)
@@ -574,7 +576,7 @@ node services/scheduler.js --run-now
 
 | Method | Path | Description |
 |--------|------|-------------|
-| POST | `/api/support/chat` | AI-powered support chat (`{ user_id, message, session_id }`) |
+| POST | `/api/support/chat` | AI-powered support chat (`{ user_id, message, session_id, context? }`) |
 | GET | `/api/support/tickets` | List open tickets (filters: `?status=OPEN&priority=HIGH`) |
 | GET | `/api/support/tickets/user/:userId` | Tickets for a specific user |
 | GET | `/api/support/tickets/:ticketId` | Single ticket details |
@@ -589,6 +591,27 @@ node services/scheduler.js --run-now
 | GET | `/api/kyc-alerts/preview` | Preview at-risk KYC users (no outreach) |
 | POST | `/api/kyc-alerts/run` | Run full alert pipeline with SMS generation |
 
+### Support Chat Request Format
+
+The frontend sends actual app data as `context` so AI responses always match what the user sees:
+
+```json
+{
+  "user_id": "demo-wallet",
+  "message": "What is my balance?",
+  "session_id": "SESS-xxx",
+  "context": {
+    "balance_paise": "23611",
+    "balance_formatted": "₹236.11",
+    "user_name": "Aarav",
+    "kyc_tier": "FULL",
+    "recent_transactions": [
+      { "entry_type": "DEBIT", "amount_paise": "5000", "amount_formatted": "₹50.00", "description": "Swiggy Order", "transaction_type": "MERCHANT_PAY", "created_at": "2026-04-14T10:00:00Z" }
+    ]
+  }
+}
+```
+
 ### Support Chat Response Format
 
 ```json
@@ -596,7 +619,7 @@ node services/scheduler.js --run-now
   "session_id": "SESS-1776238395403-user_001",
   "response_text": "Your main wallet balance is ₹236.11. You also have 5 sub-wallets...",
   "suggested_actions": ["Add money", "View sub-wallets", "Transaction history"],
-  "tools_used": ["getWalletBalance", "getSubWalletData"],
+  "tools_used": ["clientContext:balance", "getSubWalletData"],
   "intent_detected": "BALANCE_QUERY",
   "confidence": 0.95,
   "urgency": "LOW",
@@ -654,10 +677,10 @@ runKycUpgradeAgent(apiKey)
 ### Flow 2: Customer Support Query
 
 ```
-POST /api/support/chat { user_id, message, session_id }
+POST /api/support/chat { user_id, message, session_id, context? }
   │
   ▼
-handleSupportChat(userId, message, sessionId, apiKey)
+handleSupportChat(userId, message, sessionId, apiKey, context)
   │
   ├─ getOrCreateSession() → 30-min TTL
   │
@@ -665,9 +688,10 @@ handleSupportChat(userId, message, sessionId, apiKey)
   │     └─ Claude Sonnet → intent, entities, sentiment, urgency
   │     └─ [Fallback: keyword regex matcher]
   │
-  ├─ 2. investigate()
+  ├─ 2. investigate(userId, intentResult, context)
   │     └─ Dynamic tool selection per intent
-  │     └─ getWalletBalance(), getTransactionHistory(), etc.
+  │     └─ Prefer client context (balance, txns) over mock-data.js
+  │     └─ getSubWalletData(), getBlockedAttempts() etc. from server
   │
   ├─ 3. resolve()
   │     └─ Build resolution_data + suggested_actions
