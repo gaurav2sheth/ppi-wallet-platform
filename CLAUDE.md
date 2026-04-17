@@ -110,9 +110,13 @@ Supporting modules:
 - `mcp/agents/support-ticket-manager.js` — Ticket store with SLA tracking (HIGH=1hr, MEDIUM=2hr, LOW=4hr)
 - `mcp/services/scheduler.js` — Cron orchestration for all 3 jobs
 
-**Models used:**
+**Models used (current pins):**
 - `claude-sonnet-4-20250514` — Intent classification, KYC decision reasoning
 - `claude-haiku-4-5-20251001` — SMS/notification drafting, response generation, ops summaries
+
+**Model-per-task rationale:** Sonnet for reasoning (classification accuracy matters), Haiku for generation (fast + cheap, strong at constrained writing). Full analysis in [ADR-008](docs/adr/ADR-008-dual-model-claude-strategy.md) and [`kyc-agent.md` §7.3](docs/kyc-agent.md#73-model-selection-rationale).
+
+**Version upgrade policy:** Quarterly re-evaluation on the 200-case golden set. Promote if +3% accuracy OR -20% cost with equal quality. Sonnet 4.6 and Opus 4.x have been spot-tested; not yet promoted — see ADR-008 for current decisions.
 
 All Claude API calls have keyword/template fallback. Agents work at $0 cost without an API key.
 
@@ -133,6 +137,11 @@ See `docs/` for detailed specs (all converted from original .docx to markdown):
 - `docs/claude-code-pm-guide.md` — Claude Code PM guide
 - `docs/ai-agents.md` — AI agents architecture, API endpoints, data flows, cost estimates
 - `docs/kyc-agent.md` — KYC agent deep dive: few-shot patterns, context ordering, 200-case golden dataset, LLM-as-judge, failure modes, adversarial tests, product strategy
+- `docs/adr/` — 10 Architecture Decision Records (3-tier fallback, saga pattern, NCMC isolation, AI context sync, dual-model strategy, 5-shot learning, etc.)
+- `docs/diagrams.md` — Mermaid sequence diagrams (Load Guard, cascade spend, FASTag, NCMC, agents, saga lifecycle)
+- `docs/security.md` — Threat model, mock-mode guardrails, secret management, rate limiting gaps
+- `docs/edge-cases.md` — 68 edge-case specs with test-fixture status (Load Guard racing, cap math, KYC downgrade, refund flows, timezone bug)
+- `CHANGELOG.md` — Change history in Keep-a-Changelog format
 
 See `.claude/rules/` for auto-loaded context:
 - `rules/compliance.md` — RBI limits, KYC states, Load Guard rules

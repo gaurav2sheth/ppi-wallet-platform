@@ -1,6 +1,20 @@
 # PPI Wallet Platform
 
-A production-grade **Prepaid Payment Instrument (PPI) Wallet** platform built for RBI compliance, featuring a consumer mobile wallet, an admin operations dashboard, an AI-powered API server, 49 Claude AI tools via MCP, and 3 autonomous AI agents for KYC compliance and customer support.
+A **reference implementation / platform blueprint** for an RBI-compliant Prepaid Payment Instrument (PPI) Wallet. Built as a design artifact — it demonstrates how a PPI wallet, admin ops dashboard, MCP tool surface, and autonomous AI agents fit together. It is not production-hardened; see [`docs/security.md`](docs/security.md) for the honest gap list and [`docs/edge-cases.md`](docs/edge-cases.md) for 68 known-behavior specs.
+
+Contains: consumer mobile wallet, admin operations dashboard, Express API server, 49 Claude AI tools via MCP, 3 autonomous AI agents (KYC upgrade, customer support, KYC alert service).
+
+## Where's the code?
+
+**This repo is a documentation + context hub.** The substantive code lives in 4 sibling repositories. GitHub's language detection shows this repo as mostly HTML (the deployed demo bundles) because the source code is elsewhere.
+
+| What you're looking for | Repo |
+|------------------------|------|
+| Consumer wallet app (React 19 + Vite + Tailwind) | [ppi-wallet-app](https://github.com/gaurav2sheth/ppi-wallet-app) |
+| Admin dashboard (React 19 + Ant Design) | [ppi-wallet-admin-dashboard](https://github.com/gaurav2sheth/ppi-wallet-admin-dashboard) |
+| MCP server + AI agents (Node.js) | [ppi-wallet-mcp](https://github.com/gaurav2sheth/ppi-wallet-mcp) |
+| Production API deploy (Express on Render) | [ppi-wallet-api-deploy](https://github.com/gaurav2sheth/ppi-wallet-api-deploy) |
+| **This repo** — docs, ADRs, CLAUDE.md context, diagrams | ppi-wallet-platform |
 
 ## Live Demo
 
@@ -133,7 +147,20 @@ Five corporate benefit wallet types, each with distinct business rules:
 | 🎁 Gift | No cap | Self-load + employer | Universal | Expiry date, shows EXPIRED badge |
 | ⛽ Fuel | ₹2,500/month | Employer only | HP, IOCL, BPCL, Shell | Category-restricted |
 
-**Cascade spend logic**: Merchant Pay auto-detects category → checks specific sub-wallet → Gift as fallback → split across sub-wallet + main wallet if needed.
+**Cascade spend logic**: Merchant Pay auto-detects category → checks specific sub-wallet → Gift as fallback → split across sub-wallet + main wallet if needed. See the [cascade-spend sequence diagram](docs/diagrams.md#2-cascade-spend-merchant-pay) for the full flow.
+
+## MCP Tools — 49 Across 6 Categories
+
+Claude uses MCP (Model Context Protocol) tools to inspect wallet state and perform actions. All 49 tools are defined with Zod schemas in [`mcp/wallet-mcp-server.js`](https://github.com/gaurav2sheth/ppi-wallet-mcp/blob/main/wallet-mcp-server.js).
+
+| # | Category | Tool count | Examples |
+|---|---------|-----------|----------|
+| 1 | **Wallet & Balance** | 6 | `get_wallet_balance`, `add_money`, `pay_merchant`, `transfer_p2p`, `pay_bill` |
+| 2 | **Transactions & Search** | 7 | `get_transaction_history`, `search_transactions`, `get_spending_summary`, `compare_spending`, `detect_recurring_payments` |
+| 3 | **KYC & Compliance** | 11 | `get_user_profile`, `request_kyc_upgrade`, `approve_kyc`, `reject_kyc`, `check_compliance`, `query_kyc_expiry`, `generate_kyc_renewal_report` |
+| 4 | **Disputes & Refunds** | 5 | `raise_dispute`, `get_dispute_status`, `request_refund`, `get_refund_status`, `flag_suspicious_transaction` |
+| 5 | **Admin & Analytics** | 12 | `search_users`, `compare_users`, `suspend_user`, `get_system_stats`, `get_monthly_trends`, `get_peak_usage`, `get_failed_transactions`, `get_flagged_transactions`, `generate_report` |
+| 6 | **Notifications & Support** | 8 | `get_notifications`, `set_alert_threshold`, `get_support_tickets`, `create_support_ticket`, `resolve_support_ticket`, `get_reward_history`, `get_load_guard_log` |
 
 ## AI Agents
 
@@ -268,6 +295,16 @@ All source `.docx` documents have been converted to markdown and organized in `d
 | `docs/ai-agents.md` | Comprehensive agent documentation — architecture, API endpoints, data flows, Claude model usage, cost estimates, fallback strategies, business rules |
 | `docs/kyc-agent.md` | KYC agent deep dive — few-shot learning patterns, context ordering optimization, 200-case golden evaluation dataset, LLM-as-judge methodology, cost-accuracy tradeoffs, failure mode taxonomy, hallucination recovery, adversarial robustness tests (30 red-team cases), model limitations, pricing strategy |
 
+### Architecture & Engineering
+
+| File | Description |
+|------|-------------|
+| `docs/adr/` | **10 Architecture Decision Records** — 3-tier API fallback, saga pattern, sub-wallet cap treatment, FASTag deposit model, NCMC isolation, localStorage versioning, AI context sync, dual-model strategy, 5-shot learning, in-memory escalation store |
+| `docs/diagrams.md` | **Mermaid sequence diagrams** — Load Guard validation, cascade spend, FASTag toll, NCMC direct load, KYC agent flow, support agent flow, 3-tier fallback, saga lifecycle |
+| `docs/security.md` | **Threat model** — STRIDE analysis, auth gaps, mock-mode guardrails, secret management, rate limiting gaps, CSP recommendations, PII handling, AI-specific threats |
+| `docs/edge-cases.md` | **68 edge-case specs** — Load Guard concurrency, cascade spend boundaries, NCMC isolation, FASTag ordering, Gift expiry, KYC downgrade, cap math, timezone bug, refund flows, adversarial AI, offline mode |
+| `CHANGELOG.md` | **Change history** — Keep-a-Changelog format, versioning policy |
+
 ### Claude AI Context
 
 | File | Description |
@@ -307,4 +344,17 @@ All monetary values stored as **integers in paise** (1 INR = 100 paise). Display
 
 ## License
 
-Private project — not open source.
+This repository is **publicly visible** as a reference implementation and teaching artifact. All rights reserved by the author. You may:
+
+- **Read** the code and documentation for learning / evaluation
+- **Clone** and run locally for experimentation
+- **Reference** specific design patterns with attribution
+
+You may **not** (without written permission):
+
+- Use this code in a commercial product or service
+- Redistribute modified copies
+- Remove or alter the copyright notices
+- Use the design system trademarks (if any) independently
+
+For licensing inquiries (including Apache-2.0 / MIT licensing for portions), contact the repo owner via GitHub. See [`docs/security.md` §11](docs/security.md#11-disclosure-policy) for vulnerability disclosure.
