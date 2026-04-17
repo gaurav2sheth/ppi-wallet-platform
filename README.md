@@ -360,3 +360,13 @@ All monetary values stored as **integers in paise** (1 INR = 100 paise). Display
 All rights reserved. This is a personal learning project by the author; not open source and not licensed for redistribution. Code and documentation may reference patterns and frameworks from PPSL's domain but represent independent work unless otherwise noted.
 
 For licensing inquiries (including Apache-2.0 / MIT licensing for portions), contact the repo owner via GitHub. See [`docs/security.md` §11](docs/security.md#11-disclosure-policy) for vulnerability disclosure.
+
+## Author & Ownership
+
+Built by [Gaurav Sheth](https://github.com/gaurav2sheth), Product Manager at Paytm Payment Services Limited (PPSL), as a personal learning project exploring AI-assisted product development with Claude Code.
+
+**This is not PPSL property.** The work draws on the author's domain knowledge of the Indian payments ecosystem and RBI PPI regulatory framework but was built independently, outside of work hours, using only publicly available information and the author's own reasoning. It does not reproduce PPSL proprietary code, internal design documents, or unreleased roadmap.
+
+The use of Paytm design tokens (Navy `#002E6E`, Cyan `#00B9F1`, Green `#12B76A`) and directory names referencing Paytm is visual/naming continuity for the author's own reference; these are PPSL brand assets and no endorsement by PPSL is implied.
+
+Questions, corrections, or licensing inquiries: open an issue on this repo.
