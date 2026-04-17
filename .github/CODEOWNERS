@@ -1,0 +1,28 @@
+# CODEOWNERS — governance for review routing on this repo.
+#
+# Format reference: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# This repo is a solo project today, so every path's default owner is
+# the repo author. The explicit path entries below signal that compliance-
+# sensitive and ADR content is treated as governance-sensitive — if
+# collaborators are added later, changes to these paths should route
+# to the designated reviewers rather than slip through as a default
+# commit.
+
+# Default owner for everything
+*                                       @gaurav2sheth
+
+# Compliance and regulatory content — extra-care review required.
+# These files are the authoritative statements about RBI / PMLA /
+# DPDP behaviour. Changing numbers without verification against the
+# current source circular is a bug.
+/docs/compliance-reference.md           @gaurav2sheth
+/docs/compliance-gap-analysis-v1.md     @gaurav2sheth
+/docs/compliance-gap-analysis-v2.md     @gaurav2sheth
+/docs/security.md                       @gaurav2sheth
+/.claude/rules/compliance.md            @gaurav2sheth
+
+# ADRs — decisions shouldn't be silently rewritten.
+# If an ADR needs to change, a Superseded-by link is preferred over
+# an in-place rewrite.
+/docs/adr/                              @gaurav2sheth

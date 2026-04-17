@@ -18,6 +18,8 @@ Contains: consumer mobile wallet, admin operations dashboard, Express API server
 | Production API deploy (Express on Render) | [ppi-wallet-api-deploy](https://github.com/gaurav2sheth/ppi-wallet-api-deploy) |
 | **This repo** — docs, ADRs, CLAUDE.md context, diagrams | ppi-wallet-platform |
 
+> A standalone build-status dashboard lives at [`docs/build-status.html`](docs/build-status.html) — a dark-themed static page summarising component status and sprint progress. Not auto-generated; hand-maintained.
+
 ## Live Demo
 
 | App | URL |
