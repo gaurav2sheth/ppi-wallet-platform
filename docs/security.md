@@ -16,7 +16,8 @@ This document catalogs the security posture of the PPI Wallet Platform — both 
 - [8. PII & Data Handling](#8-pii--data-handling)
 - [9. AI-Specific Security](#9-ai-specific-security)
 - [10. Dependency Hygiene](#10-dependency-hygiene)
-- [11. Disclosure Policy](#11-disclosure-policy)
+- [11. Mock Data Policy](#11-mock-data-policy)
+- [12. Disclosure Policy](#12-disclosure-policy)
 
 ---
 
@@ -366,7 +367,41 @@ Review policy: any new dependency must be:
 
 ---
 
-## 11. Disclosure Policy
+## 11. Mock Data Policy
+
+All user, employer, transaction, and account records in this codebase are synthetic. Specifically:
+
+- **User records** are generated via deterministic PRNG (seed 42 in `mcp/mock-data.js`) with fictional names.
+- **Employer records** use fictional company names (Acme Payments Corp, Nimbus Technologies, Meridian Logistics, Helios Consulting). Real employer names must never be used, even for demo purposes.
+- **Transaction records** are generated via PRNG against the fictional users.
+- **Merchant category references** (e.g., Swiggy, Zomato as food delivery examples; HP, IOCL, BPCL, Shell as fuel retailers) are retained because they illustrate RBI-defined merchant categories, not customer relationships. These are acceptable.
+- **Demo admin credentials** are hardcoded fallback values documented via `.env.example` in `admin-dashboard/`. They are never representative of real accounts.
+
+### Rules for contributors
+
+When adding seed data, examples, or fixtures:
+
+- Never paste real transaction logs, real customer names, real employer lists, or real merchant-specific pricing.
+- Never use PII of any real person, including yourself, colleagues, or family members.
+- Flag any seed data that could be misread as real operational data with a `// SYNTHETIC` comment.
+- If real data is needed for any reason (e.g., compliance testing with RBI-mandated test accounts), it lives in a separate, private repo — never here.
+
+### What's considered acceptable
+
+| Category | Acceptable | Not acceptable |
+| --- | --- | --- |
+| Merchant brand names in category lists | Swiggy, Zomato, Amazon, Flipkart as examples of food-delivery / shopping / etc. categories | Any suggestion that these merchants have a business relationship with this project or PPSL |
+| Employer / customer names | Invented names (Acme Payments Corp, etc.) | Real company names (Paytm, TCS, Infosys, any real employer) |
+| User profile data | Common Indian first/last name combinations, synthetic phone numbers (`9XXXXXXXXX` patterns) | Real names, real phone numbers, real PAN / Aadhaar |
+| Amounts and dates | Fabricated for realistic distributions | Real transaction amounts from any live system |
+
+### Verification history
+
+| Date | Finding | Resolution |
+| --- | --- | --- |
+| 2026-04-17 | Grep across all 5 repos for real company names surfaced `Paytm` and `TCS` in `mcp/mock-data.js` employer seeds and `Paytm (Employer)` in `paytm-wallet-app/src/api/mock.ts` sub-wallet txn seeds. | Replaced with `Acme Payments Corp` / `Nimbus Technologies` / `Meridian Logistics` / `Helios Consulting` across both repos. Merchant-category references (Swiggy, Zomato, etc.) retained per policy. |
+
+## 12. Disclosure Policy
 
 This is a reference implementation — we don't run a bug bounty. If you find a security issue:
 

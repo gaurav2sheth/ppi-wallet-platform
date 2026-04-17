@@ -8,22 +8,39 @@ Versions are implicit (pre-1.0 rolling releases); dates are in IST.
 
 ### Added
 - `CHANGELOG.md` at platform root
-- `docs/adr/` — 10 Architecture Decision Records promoted from CLAUDE.md
+- `docs/adr/` — 11 Architecture Decision Records promoted from CLAUDE.md (was 10; added ADR-011 BigInt paise)
 - `docs/diagrams.md` — Mermaid sequence diagrams (Load Guard, cascade-spend, agent flows)
-- `docs/security.md` — Threat model, secret management, mock-mode guardrails, rate limiting gaps
-- `docs/edge-cases.md` — 40+ edge-case specs (Load Guard racing, cap math, KYC downgrade, refund flows)
+- `docs/security.md` — Threat model, secret management, mock-mode guardrails, rate limiting gaps, Mock Data Policy
+- `docs/edge-cases.md` — 68 edge-case specs (Load Guard racing, cap math, KYC downgrade, refund flows)
+- `docs/scope-and-limitations.md` — What's real vs mocked; paired production requirements for every gap
+- `docs/compliance-reference.md` — **Single source of truth for regulatory numbers**; retrofitted into README / rules / PRD / gap-v2
+- `docs/ui-reference/` — Renamed from `Paytm App UI screenshots/`, added README with attribution
+- `docs/build-status.html` — Renamed from `ppsl-ppi-wallet-dashboard.html`
+- `.github/CODEOWNERS` — Governance routing for compliance + ADR paths
+- `README.md#author--ownership` — Author & Ownership section (Option A: personal project, not PPSL property)
+- `.env.example` files in all 4 sub-repos (paytm-wallet-app, admin-dashboard, mcp, ppi-wallet-api-deploy)
 - README "Where's the code?" callout linking to all 4 sibling repos
+- 21 new adversarial / boundary tests across wallet app + MCP (19 passing + 2 passing + 4 skipped documenting code gaps). Total: 285 tests.
 
 ### Changed
-- README framing softened from "production-grade" → "reference implementation / platform blueprint"
+- README framing softened from "production-grade" → "reference implementation / platform blueprint", then further reframed with a top-of-README status banner ("AI-assisted reference implementation; not PPSL production code")
 - README License section made consistent with the public repo
-- README now lists the 49 MCP tools by category (6 categories, with examples)
+- README now lists the 49 MCP tools by category (8 categories after KYC Agent + Support Agent additions)
+- README Full-KYC monthly load cap corrected ₹1L → ₹2L (code already enforced ₹2L; docs had drifted)
+- README admin credentials table replaced with a pointer to `.env.example` + `security.md §Auth`
+- CLAUDE.md "Key Architecture Decisions" bullet list replaced with a link table into `docs/adr/`
+- All regulatory-number claims now defer to `docs/compliance-reference.md`; downstream docs link there rather than restating
+
+### Fixed
+- **Data hygiene:** Real employer names (`Paytm`, `TCS`, `Paytm (Employer)`) in mock seed data replaced with fictional equivalents (Acme Payments Corp, Nimbus Technologies, Meridian Logistics, Helios Consulting) across `mcp/mock-data.js` and `paytm-wallet-app/src/api/mock.ts`. Merchant-category references (Swiggy, Zomato, etc.) retained per the new Mock Data Policy in `security.md §11`.
+- Stale "₹1L RBI cap" wording in `.claude/rules/sub-wallets.md` and `ADR-003` corrected to reference the tier-aware RBI caps (₹2L Full-KYC / ₹10K Min-KYC) and the code's conservative ₹1L implementation baseline.
 
 ### Known Gaps (not blockers; tracked)
 - Mock-mode balances are editable in localStorage and not explicitly labeled as demo data
 - Admin auth is hardcoded `admin123` — demo-only, no token rotation
 - No server-side rate limiting on the Render API
 - No Content-Security-Policy headers on the GitHub Pages builds
+- `compliance-reference.md` source-paragraph citations all marked ⚠️ TO VERIFY — author-side homework against current RBI circulars
 
 ---
 
