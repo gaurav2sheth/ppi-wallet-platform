@@ -100,15 +100,11 @@ cd api-server && npm install && npm run dev
 # → http://localhost:3001
 ```
 
-### Admin Dashboard Credentials
+### Admin Dashboard Credentials (Demo Mode)
 
-> **Demo-only.** Hardcoded credentials below are for local demo and the GitHub Pages build. They are not used for any live system. See [`docs/security.md` §3 Authentication & Authorization](docs/security.md#3-authentication--authorization) for the full auth gap analysis and what would change for production (token rotation, MFA, backend RBAC enforcement, etc.).
+Demo credentials are loaded from environment variables. See [`admin-dashboard/.env.example`](https://github.com/gaurav2sheth/ppi-wallet-admin-dashboard/blob/main/.env.example) for the variable names and copy it to `.env` with values of your choice.
 
-| Role | Username | Password |
-|------|----------|----------|
-| Super Admin | admin | admin123 |
-| Business Admin | business | admin123 |
-| CS Agent | support | admin123 |
+Three demo roles are wired: **Super Admin**, **Business Admin**, **CS Agent**. All three use hardcoded demo auth — no real authentication, no session rotation, no MFA. This is explicitly a demo-only pattern; see [`docs/security.md` §3 Auth gaps](docs/security.md#3-authentication--authorization) for the production auth requirements (OIDC, MFA, rotation, backend RBAC enforcement).
 
 ## Features
 
