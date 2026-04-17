@@ -266,6 +266,7 @@ All source `.docx` documents have been converted to markdown and organized in `d
 | File | Description |
 |------|-------------|
 | `docs/ai-agents.md` | Comprehensive agent documentation — architecture, API endpoints, data flows, Claude model usage, cost estimates, fallback strategies, business rules |
+| `docs/kyc-agent.md` | KYC agent deep dive — few-shot learning patterns, context ordering optimization, 200-case golden evaluation dataset, LLM-as-judge methodology, cost-accuracy tradeoffs, failure mode taxonomy, hallucination recovery, adversarial robustness tests (30 red-team cases), model limitations, pricing strategy |
 
 ### Claude AI Context
 

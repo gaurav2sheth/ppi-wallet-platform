@@ -132,6 +132,7 @@ See `docs/` for detailed specs (all converted from original .docx to markdown):
 - `docs/partner-bank-evaluation.md` — Partner bank evaluation matrix
 - `docs/claude-code-pm-guide.md` — Claude Code PM guide
 - `docs/ai-agents.md` — AI agents architecture, API endpoints, data flows, cost estimates
+- `docs/kyc-agent.md` — KYC agent deep dive: few-shot patterns, context ordering, 200-case golden dataset, LLM-as-judge, failure modes, adversarial tests, product strategy
 
 See `.claude/rules/` for auto-loaded context:
 - `rules/compliance.md` — RBI limits, KYC states, Load Guard rules
