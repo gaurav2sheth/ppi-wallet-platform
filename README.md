@@ -219,19 +219,22 @@ UNDERSTAND → INVESTIGATE → RESOLVE → RESPOND → ESCALATE (if needed)
 
 ## RBI Compliance
 
-All regulatory rules are enforced at every transaction:
+All regulatory rules are enforced at every transaction, per the RBI Master Directions on Prepaid Payment Instruments (as amended):
 
-| Rule | Min-KYC | Full-KYC |
-|------|---------|----------|
-| Balance cap | ₹10,000 | ₹2,00,000 |
-| Monthly load | ₹10,000 | ₹1,00,000 |
+| Rule | Min-KYC (Small PPI) | Full-KYC |
+| --- | --- | --- |
+| Balance cap (outstanding) | ₹10,000 | ₹2,00,000 |
+| Monthly load | ₹10,000 | ₹2,00,000 |
 | P2P transfer | Prohibited | ₹1,00,000/month |
 | Cash withdrawal | Not allowed | ₹2,000/txn, ₹10,000/month |
 
 **Load Guard** validates every Add Money against 3 rules:
-1. **BALANCE_CAP** — Main wallet + all sub-wallets ≤ ₹1,00,000
-2. **MONTHLY_LOAD** — Calendar month total ≤ ₹2,00,000
-3. **MIN_KYC_CAP** — Min-KYC wallets ≤ ₹10,000
+
+1. **BALANCE_CAP** — Main wallet + all sub-wallets combined ≤ ₹2,00,000 (Full-KYC) or ≤ ₹10,000 (Min-KYC)
+2. **MONTHLY_LOAD** — Calendar month total loads ≤ ₹2,00,000 (Full-KYC) or ≤ ₹10,000 (Min-KYC)
+3. **MIN_KYC_CAP** — Small-PPI wallets total balance ≤ ₹10,000 at all times
+
+> Verify current limits against the latest RBI circulars before any production use. Values shown reflect the framework as of the last documentation review.
 
 ## Testing
 
