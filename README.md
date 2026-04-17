@@ -243,17 +243,19 @@ All regulatory rules are enforced at every transaction, per the RBI Master Direc
 All projects have comprehensive test suites using Vitest + React Testing Library:
 
 ```bash
-# Wallet app — 94 tests
+# Wallet app — 113 tests (94 baseline + 19 adversarial/boundary)
 cd paytm-wallet-app && npm test
 
 # Admin dashboard — 111 tests
 cd admin-dashboard && npm test
 
-# MCP agents — 59 tests
+# MCP agents — 61 tests (59 baseline + 2 timezone invariants)
 cd mcp && npx vitest run
 ```
 
-**264 total tests** covering utilities, mock data layer, Zustand stores, components, pages, RBAC, auth guards, and AI agent functions (intent classification, escalation, ticket management, notification lifecycle).
+**285 total tests** covering utilities, mock data layer, Zustand stores, components, pages, RBAC, auth guards, and AI agent functions (intent classification, escalation, ticket management, notification lifecycle) — **including adversarial and boundary cases for Load Guard cap/monthly limits, cascade-spend eligibility chain, NCMC isolation invariants, and timezone-sensitive monthly resets**.
+
+4 additional tests are intentionally skipped, each linked to a specific code gap in [`docs/scope-and-limitations.md §Adversarial test findings`](docs/scope-and-limitations.md). They will unblock once: (a) an atomic `processLoad` with idempotency-key dedupe is introduced; (b) `calculateCascadeSpend` is extracted as a pure function; (c) a `transactions` service exposes `attemptP2P`/`attemptMerchantPay` with explicit source-wallet parameters; (d) `getMonthlyLoadedPaise` accepts a timezone argument.
 
 ## Build & Deploy
 
