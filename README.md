@@ -1,6 +1,6 @@
 # PPI Wallet Platform
 
-> **Status:** AI-assisted reference implementation built with Claude Code as a learning and prototyping exercise. Demonstrates a full RBI-compliant PPI wallet architecture end-to-end — consumer app, admin ops, MCP tool layer, and autonomous AI agents — against mock data and client-side state. Not PPSL production code; not currently integrated with live banking rails, real KYC providers, or production ledgers.
+> **Status:** AI-assisted reference implementation built with Claude Code as a learning and prototyping exercise. Demonstrates a full RBI-compliant PPI wallet architecture end-to-end — consumer app, admin ops, MCP tool layer, and autonomous AI agents — against mock data and client-side state. Not PPSL production code; not currently integrated with live banking rails, real KYC providers, or production ledgers. See [`docs/scope-and-limitations.md`](docs/scope-and-limitations.md) for a full statement of scope and production gaps.
 
 A reference **Prepaid Payment Instrument (PPI) Wallet** platform modelled on RBI's PPI Master Directions, featuring a consumer mobile wallet, an admin operations dashboard, an AI-powered API server, 49 Claude AI tools via MCP, and 3 autonomous AI agents for KYC compliance and customer support.
 

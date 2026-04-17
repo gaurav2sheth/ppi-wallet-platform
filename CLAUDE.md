@@ -135,6 +135,7 @@ See `docs/` for detailed specs (all converted from original .docx to markdown):
 - `docs/competitive-benchmark.md` — PPSL vs competitors
 - `docs/partner-bank-evaluation.md` — Partner bank evaluation matrix
 - `docs/claude-code-pm-guide.md` — Claude Code PM guide
+- `docs/scope-and-limitations.md` — What's real vs mocked, anti-patterns, production gap list (the "what this is and isn't" doc)
 - `docs/ai-agents.md` — AI agents architecture, API endpoints, data flows, cost estimates
 - `docs/kyc-agent.md` — KYC agent deep dive: few-shot patterns, context ordering, 200-case golden dataset, LLM-as-judge, failure modes, adversarial tests, product strategy
 - `docs/adr/` — 10 Architecture Decision Records (3-tier fallback, saga pattern, NCMC isolation, AI context sync, dual-model strategy, 5-shot learning, etc.)
