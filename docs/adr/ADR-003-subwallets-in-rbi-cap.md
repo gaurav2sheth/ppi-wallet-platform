@@ -1,8 +1,9 @@
-# ADR-003: Sub-wallet balances count toward the ₹1L RBI cap
+# ADR-003: Sub-wallet balances count toward the RBI PPI cap
 
 **Status:** Accepted
 **Date:** 2026-04-11
 **Deciders:** Platform team + compliance review
+**Regulatory numbers source:** [`compliance-reference.md`](../compliance-reference.md) — do not hard-code ₹ values in this ADR; link there instead.
 
 ## Context
 

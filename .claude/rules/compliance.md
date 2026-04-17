@@ -2,6 +2,8 @@
 
 These rules are non-negotiable and must be enforced in all wallet operations.
 
+> **Source of truth for regulatory numbers:** [`docs/compliance-reference.md`](../../docs/compliance-reference.md). All numeric values in this file MUST match that document. If they diverge, the reference doc wins — update this file to match, not the other way around.
+
 ## KYC Tiers & Limits
 
 | Rule | Min-KYC (Small PPI) | Full-KYC |

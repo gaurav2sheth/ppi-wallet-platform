@@ -1,6 +1,6 @@
 # Sub-Wallet System (Corporate Benefits)
 
-5 benefit wallet types, each with distinct rules. Sub-wallet balances count toward the ₹1L RBI cap.
+5 benefit wallet types, each with distinct rules. Sub-wallet balances count toward the combined RBI PPI cap (₹2L Full-KYC / ₹10K Min-KYC — see [`docs/compliance-reference.md`](../../docs/compliance-reference.md)). Note that the reference implementation's Load Guard uses a conservative ₹1L baseline; see the implementation-choices table in the compliance reference for the code vs regulation delta.
 
 ## Food Wallet 🍱
 - **Employer-loaded only** — no self-load

@@ -4,7 +4,7 @@ Version 2.0  |  Based on PRD v1.1 (Compliance-Updated)  |  Paytm Payment Service
 
 Cross-reference: PRD v1.1 vs RBI PPI Master Directions (Oct 2023) · RBI PA-PG Guidelines (Mar 2022/2025) · PMLA 2002 · RBI KYC-MD (Oct 2023) · NPCI UPI Guidelines · Dec 2024 RBI PPI Amendment
 
-> **Point-in-time document.** This analysis reflects RBI guidance current as of March 2026. Specific numeric limits (e.g. Full-KYC monthly load) may have been superseded by later amendments. For the **current canonical limits** used across the codebase, see [`.claude/rules/compliance.md`](../.claude/rules/compliance.md) — which is kept in sync with the Load Guard implementation at `mcp/services/wallet-load-guard.js`. Any production use must verify against the latest RBI circulars, not this document.
+> **Point-in-time document.** This analysis reflects RBI guidance current as of March 2026. Specific numeric limits (e.g. Full-KYC monthly load) may have been superseded by later amendments. For the **current canonical limits** used across the codebase, see [`docs/compliance-reference.md`](compliance-reference.md) (single source of truth) and [`.claude/rules/compliance.md`](../.claude/rules/compliance.md) (which mirrors the reference). Any production use must verify against the latest RBI circulars, not this document.
 
 This version reflects the updated PRD v1.1, which incorporated all gaps identified in the original Compliance Gap Analysis (v1.0). Items previously marked CRITICAL or GAP are reassessed below. Remaining open items are flagged for legal action or product decisions.
 

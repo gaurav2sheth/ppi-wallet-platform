@@ -1,5 +1,7 @@
 # PPI Wallet Platform -- Product Requirements Document v1.1
 
+> **Regulatory numbers in this PRD reference** [`compliance-reference.md`](compliance-reference.md), **not a local copy.** Where specific ₹ amounts appear inline (balance caps, monthly limits, P2P aggregates, etc.), they are summaries of values in that reference doc. If this PRD and the reference doc diverge, the reference doc wins.
+
 ---
 
 ## 1. Product Overview
