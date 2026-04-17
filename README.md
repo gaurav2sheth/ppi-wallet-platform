@@ -1,8 +1,10 @@
 # PPI Wallet Platform
 
-A **reference implementation / platform blueprint** for an RBI-compliant Prepaid Payment Instrument (PPI) Wallet. Built as a design artifact — it demonstrates how a PPI wallet, admin ops dashboard, MCP tool surface, and autonomous AI agents fit together. It is not production-hardened; see [`docs/security.md`](docs/security.md) for the honest gap list and [`docs/edge-cases.md`](docs/edge-cases.md) for 68 known-behavior specs.
+> **Status:** AI-assisted reference implementation built with Claude Code as a learning and prototyping exercise. Demonstrates a full RBI-compliant PPI wallet architecture end-to-end — consumer app, admin ops, MCP tool layer, and autonomous AI agents — against mock data and client-side state. Not PPSL production code; not currently integrated with live banking rails, real KYC providers, or production ledgers.
 
-Contains: consumer mobile wallet, admin operations dashboard, Express API server, 49 Claude AI tools via MCP, 3 autonomous AI agents (KYC upgrade, customer support, KYC alert service).
+A reference **Prepaid Payment Instrument (PPI) Wallet** platform modelled on RBI's PPI Master Directions, featuring a consumer mobile wallet, an admin operations dashboard, an AI-powered API server, 49 Claude AI tools via MCP, and 3 autonomous AI agents for KYC compliance and customer support.
+
+Contains: consumer mobile wallet, admin operations dashboard, Express API server, 49 Claude AI tools via MCP, 3 autonomous AI agents (KYC upgrade, customer support, KYC alert service). See [`docs/security.md`](docs/security.md) for the honest gap list and [`docs/edge-cases.md`](docs/edge-cases.md) for 68 known-behavior specs.
 
 ## Where's the code?
 
@@ -349,17 +351,6 @@ All monetary values stored as **integers in paise** (1 INR = 100 paise). Display
 
 ## License
 
-This repository is **publicly visible** as a reference implementation and teaching artifact. All rights reserved by the author. You may:
-
-- **Read** the code and documentation for learning / evaluation
-- **Clone** and run locally for experimentation
-- **Reference** specific design patterns with attribution
-
-You may **not** (without written permission):
-
-- Use this code in a commercial product or service
-- Redistribute modified copies
-- Remove or alter the copyright notices
-- Use the design system trademarks (if any) independently
+All rights reserved. This is a personal learning project by the author; not open source and not licensed for redistribution. Code and documentation may reference patterns and frameworks from PPSL's domain but represent independent work unless otherwise noted.
 
 For licensing inquiries (including Apache-2.0 / MIT licensing for portions), contact the repo owner via GitHub. See [`docs/security.md` §11](docs/security.md#11-disclosure-policy) for vulnerability disclosure.
