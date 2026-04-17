@@ -149,18 +149,20 @@ Five corporate benefit wallet types, each with distinct business rules:
 
 **Cascade spend logic**: Merchant Pay auto-detects category → checks specific sub-wallet → Gift as fallback → split across sub-wallet + main wallet if needed. See the [cascade-spend sequence diagram](docs/diagrams.md#2-cascade-spend-merchant-pay) for the full flow.
 
-## MCP Tools — 49 Across 6 Categories
+## MCP Tools — 49 Across 8 Categories
 
-Claude uses MCP (Model Context Protocol) tools to inspect wallet state and perform actions. All 49 tools are defined with Zod schemas in [`mcp/wallet-mcp-server.js`](https://github.com/gaurav2sheth/ppi-wallet-mcp/blob/main/wallet-mcp-server.js).
+Claude uses MCP (Model Context Protocol) tools to inspect wallet state and perform actions. All 49 tools are defined with Zod schemas in [`mcp/wallet-mcp-server.js`](https://github.com/gaurav2sheth/ppi-wallet-mcp/blob/main/wallet-mcp-server.js). Count verified: `grep -cE '^\s*server\.tool\(' wallet-mcp-server.js` → 49.
 
 | # | Category | Tool count | Examples |
 |---|---------|-----------|----------|
-| 1 | **Wallet & Balance** | 6 | `get_wallet_balance`, `add_money`, `pay_merchant`, `transfer_p2p`, `pay_bill` |
-| 2 | **Transactions & Search** | 7 | `get_transaction_history`, `search_transactions`, `get_spending_summary`, `compare_spending`, `detect_recurring_payments` |
-| 3 | **KYC & Compliance** | 11 | `get_user_profile`, `request_kyc_upgrade`, `approve_kyc`, `reject_kyc`, `check_compliance`, `query_kyc_expiry`, `generate_kyc_renewal_report` |
-| 4 | **Disputes & Refunds** | 5 | `raise_dispute`, `get_dispute_status`, `request_refund`, `get_refund_status`, `flag_suspicious_transaction` |
-| 5 | **Admin & Analytics** | 12 | `search_users`, `compare_users`, `suspend_user`, `get_system_stats`, `get_monthly_trends`, `get_peak_usage`, `get_failed_transactions`, `get_flagged_transactions`, `generate_report` |
-| 6 | **Notifications & Support** | 8 | `get_notifications`, `set_alert_threshold`, `get_support_tickets`, `create_support_ticket`, `resolve_support_ticket`, `get_reward_history`, `get_load_guard_log` |
+| 1 | **User** | 12 | `get_wallet_balance`, `get_transaction_history`, `get_spending_summary`, `search_transactions`, `get_user_profile`, `compare_spending`, `detect_recurring_payments`, `flag_suspicious_transaction`, `unflag_transaction`, `generate_report`, `get_notifications`, `set_alert_threshold` |
+| 2 | **Transaction** | 5 | `add_money`, `pay_merchant`, `transfer_p2p`, `pay_bill`, `request_refund` |
+| 3 | **Admin** | 10 | `get_system_stats`, `search_users`, `get_flagged_transactions`, `suspend_user`, `get_failed_transactions`, `get_kyc_stats`, `check_compliance`, `compare_users`, `get_peak_usage`, `get_monthly_trends` |
+| 4 | **KYC** | 5 | `approve_kyc`, `reject_kyc`, `request_kyc_upgrade`, `query_kyc_expiry`, `generate_kyc_renewal_report` |
+| 5 | **Support** | 3 | `raise_dispute`, `get_dispute_status`, `get_refund_status` |
+| 6 | **Sub-Wallet** | 4 | `get_sub_wallets`, `load_sub_wallet`, `get_sub_wallet_transactions`, `check_merchant_eligibility` |
+| 7 | **KYC Agent** | 5 | `send_kyc_notification`, `check_kyc_upgrade_status`, `grant_upgrade_reward`, `get_agent_escalations`, `resolve_escalation` |
+| 8 | **Support Agent** | 5 | `get_support_tickets`, `create_support_ticket`, `resolve_support_ticket`, `get_reward_history`, `get_load_guard_log` |
 
 ## AI Agents
 
@@ -323,7 +325,7 @@ All source `.docx` documents have been converted to markdown and organized in `d
 | Frontend (Wallet) | React 19, TypeScript, Vite 8, Tailwind CSS 4, Zustand 5 |
 | Frontend (Admin) | React 19, TypeScript, Vite 6, Ant Design 5, ECharts 5, Zustand 5 |
 | Backend | Express.js, Anthropic Claude API |
-| AI Tools | MCP Protocol, Zod validation, 49 tools across 6 categories |
+| AI Tools | MCP Protocol, Zod validation, 49 tools across 8 categories (User 12 / Transaction 5 / Admin 10 / KYC 5 / Support 3 / Sub-Wallet 4 / KYC Agent 5 / Support Agent 5) |
 | AI Agents | KYC Upgrade Agent (Sonnet+Haiku), Customer Support Agent (Sonnet+Haiku), KYC Alert Service (Haiku) |
 | Testing | Vitest, React Testing Library, jsdom |
 | Deployment | GitHub Pages (frontends), Render (API) |
