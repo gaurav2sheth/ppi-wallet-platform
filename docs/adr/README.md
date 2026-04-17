@@ -22,6 +22,7 @@ follows [Michael Nygard's template](https://cognitect.com/blog/2011/11/15/docume
 | [008](ADR-008-dual-model-claude-strategy.md) | Dual-model strategy (Sonnet + Haiku) | Accepted | AI agents |
 | [009](ADR-009-five-shot-learning.md) | 5-shot in-context learning for KYC agent | Accepted | AI agents |
 | [010](ADR-010-in-memory-escalation-store.md) | In-memory shared escalation store | Accepted | AI agents |
+| [011](ADR-011-monetary-arithmetic-in-paise-bigint.md) | Monetary arithmetic in paise with BigInt | Accepted | Foundations |
 
 ## Creating a new ADR
 

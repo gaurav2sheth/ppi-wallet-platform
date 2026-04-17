@@ -85,15 +85,25 @@ git clone https://github.com/gaurav2sheth/ppi-wallet-api-deploy.git ppi-wallet-a
 | `api-server/` | (local only, deployed via ppi-wallet-api-deploy) |
 | `ppi-wallet-api-deploy/` | [ppi-wallet-api-deploy](https://github.com/gaurav2sheth/ppi-wallet-api-deploy) |
 
-## Key Architecture Decisions
+## Architecture Decisions
 
-- **3-tier API fallback**: Vite middleware → Express API → client-side mock. The app always works, even offline.
-- **Saga pattern** for transactions: Amount → PIN → API call → Result screen (success/retry).
-- **Sub-wallet balances included in RBI cap**: ₹1L limit = main wallet + all sub-wallet balances combined.
-- **FASTag = security deposit model**: Tolls deduct from main wallet; deposit is last resort.
-- **NCMC = isolated balance**: ₹3K cap, transit-only, never cascades to main wallet. Supports direct load from UPI/DC/NB (bypasses main wallet).
-- **AI context sync**: Support agent receives actual app balance + transactions from the frontend (not server mock data), ensuring AI responses match what the user sees.
-- **localStorage versioning**: Sub-wallet key is `__mock_sub_wallets_v2` to force re-seed on schema changes.
+See [`docs/adr/`](docs/adr/) for the full set of architecture decision records. Each ADR captures context, decision, consequences (positive and negative), alternatives considered, and references.
+
+Currently accepted:
+
+| # | Title |
+|---|-------|
+| [001](docs/adr/ADR-001-three-tier-api-fallback.md) | Three-tier API fallback |
+| [002](docs/adr/ADR-002-saga-pattern-transactions.md) | Saga pattern for transactions |
+| [003](docs/adr/ADR-003-subwallets-in-rbi-cap.md) | Sub-wallet balances count toward the RBI cap |
+| [004](docs/adr/ADR-004-fastag-security-deposit.md) | FASTag as security deposit model |
+| [005](docs/adr/ADR-005-ncmc-isolated-balance.md) | NCMC isolated balance (no cascade) |
+| [006](docs/adr/ADR-006-localstorage-versioning.md) | localStorage key versioning |
+| [007](docs/adr/ADR-007-ai-context-sync.md) | AI context sync (client provides ground truth) |
+| [008](docs/adr/ADR-008-dual-model-claude-strategy.md) | Dual-model strategy (Sonnet + Haiku) |
+| [009](docs/adr/ADR-009-five-shot-learning.md) | 5-shot in-context learning for KYC agent |
+| [010](docs/adr/ADR-010-in-memory-escalation-store.md) | In-memory shared escalation store |
+| [011](docs/adr/ADR-011-monetary-arithmetic-in-paise-bigint.md) | Monetary arithmetic in paise with BigInt |
 
 ## AI Agents
 
