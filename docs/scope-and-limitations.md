@@ -37,11 +37,11 @@ An AI-assisted reference implementation built using Claude Code as the primary e
 | Auth | Hardcoded demo credentials | OAuth2 / OIDC, MFA, token rotation |
 | Secrets management | `.env` | HSM or secrets vault (e.g., AWS KMS, HashiCorp Vault) |
 | Rate limiting | Not implemented | Per-user and per-endpoint on all mutating calls |
-| Transaction commit path | `mockValidateLoad` only validates; no `processLoad` that actually commits an atomic load | Transactional write with idempotency-key-backed dedupe and compensating saga |
-| Cascade-spend as a discrete service | Logic is split across `mockAddMoneyToSubWallet`, `mockCheckEligibility`, `mockFindBestSubWallet` in `mock.ts`; no single `calculateCascadeSpend(input)` pure function | A single pure function that, given `{amount, category, balances}`, returns the full split plan — so it can be unit-tested in isolation and reused on both client and server |
+| Transaction commit path | ✅ `processLoad()` atomic validate+commit with idempotency-key dedupe now exists (`mcp/services/wallet-load-guard.js`) | Production: back the in-process lock + in-memory key store with Postgres row locks + Redis key store with TTL |
+| Cascade-spend as a discrete service | ✅ Pure `calculateCascadeSpend(input)` function exists (`paytm-wallet-app/src/services/cascade-spend.ts`) with 13 invariant tests | Production: reuse same pure function server-side; wire the returned plan to a real ledger write |
 | Tier-differentiated BALANCE_CAP | Code enforces flat ₹1L regardless of KYC tier (`BALANCE_CAP_PAISE = 10000000`); docs describe tier-aware RBI policy | Per-tier caps: ₹2L Full-KYC, ₹10K Min-KYC, with Load Guard reading the user's tier at check time |
-| Timezone-aware monthly-load reset | `getMonthlyLoadedPaise(userId)` uses server-local time via JS `new Date().getMonth()` — undefined behavior at IST/UTC boundary | `getMonthlyLoadedPaise(userId, { timezone: 'Asia/Kolkata' })` using `Intl.DateTimeFormat` or a TZ lib, with explicit IST boundary tests |
-| Concurrency / racing load requests | Single-process in-memory state; no row locks, no optimistic concurrency | Postgres `SELECT ... FOR UPDATE` or Redis-based distributed lock on `(user_id, op_type)`; idempotency key store with TTL for replay protection |
+| Timezone-aware monthly-load reset | ✅ `getMonthlyLoadTotal({loads, month, timezone})` + timezone-aware `getMonthlyLoadedPaise(userId, 'Asia/Kolkata')` now exist | Production: plumb explicit timezone through all callers; default to IST |
+| Concurrency / racing load requests | Single-process in-memory lock in `processLoad()` — sufficient for this reference impl's scale | Postgres `SELECT ... FOR UPDATE` or Redis distributed lock on `(user_id, op_type)`; idempotency key store with TTL (design preserved so the API surface doesn't change) |
 
 ## Known anti-patterns deliberately used for demo purposes
 
@@ -71,12 +71,15 @@ An AI-assisted reference implementation built using Claude Code as the primary e
 
 ## Adversarial test findings (see `edge-cases.md` for the full 68-case catalog)
 
-The adversarial test pass (2026-04-17) surfaced the following code gaps (each is an opportunity for a small production hardening PR):
+The adversarial test pass (2026-04-17) surfaced four code gaps. **Three of four are now closed** (2026-04-17 later in the day), leaving one outstanding:
 
-1. **No atomic `processLoad`** — the split between `mockValidateLoad` (read-only) and the saga-level commit means a racing second request can validate green and then commit over the cap. Mitigation: introduce a single `processLoad(userId, amount, idempotencyKey)` that validates + commits in one locked step.
-2. **No cascade-spend pure function** — logic scattered across eligibility-check, best-subwallet-pick, and per-wallet debit functions makes it hard to assert the "clean decline with no partial debit" invariant in one test. Mitigation: extract `calculateCascadeSpend(input) → {splits, status, reason}` as a pure function.
-3. **No NCMC hard-reject service-boundary tests** — the isolation invariants (NCMC cannot P2P, NCMC cannot pay non-transit merchants) are guaranteed by omission in the UI but not tested at a service layer. Mitigation: once a `transactions` service is extracted, add explicit rejection tests.
-4. **Monthly-load timezone behavior is ambiguous** — the `getMonthlyLoadedPaise()` function reads local server time, not IST; on a UTC-hosted Render instance, IST users cross month boundaries 5.5 hours late. Mitigation: make timezone explicit and IST by policy.
+1. ~~**No atomic `processLoad`**~~ ✅ **CLOSED.** `processLoad({userId, amountPaise, idempotencyKey, apiKey})` shipped in `mcp/services/wallet-load-guard.js`. Atomic validate+commit under per-user serialization lock with 24h idempotency-key cache. 10 tests in `mcp/agents/__tests__/process-load-concurrency.test.js`.
+
+2. ~~**No cascade-spend pure function**~~ ✅ **CLOSED.** `calculateCascadeSpend(input) → {splits, status, reason}` shipped in `paytm-wallet-app/src/services/cascade-spend.ts`. Takes immutable input, returns a plan, never writes. 13 tests in `src/services/__tests__/cascade-spend.test.ts` enforce: category-specific priority, Gift fallback rules, expired-Gift exclusion, clean decline with zero partial-debit, no-zero-amount-splits.
+
+3. **No NCMC hard-reject service-boundary tests** — **still open.** The isolation invariants (NCMC cannot P2P, NCMC cannot pay non-transit merchants) are guaranteed by omission in the UI and the mockCheckEligibility function, but not enforced at a `transactions` service layer because no such service exists yet. Mitigation: when a `transactions` service is extracted with explicit source-wallet parameters, add explicit rejection tests. The current eligibility tests exercise the equivalent invariants through `mockCheckEligibility`.
+
+4. ~~**Monthly-load timezone behavior is ambiguous**~~ ✅ **CLOSED.** `getMonthlyLoadTotal({loads, month, timezone})` shipped in `mcp/services/wallet-load-guard.js` using `Intl.DateTimeFormat` for correct IST boundaries. `getMonthlyLoadedPaise()` now delegates with default `'Asia/Kolkata'`. 7 tests exercise the 23:30-IST / 00:30-IST boundary. Render's UTC hosting no longer mis-classifies IST month boundaries.
 
 ## How to read the rest of the documentation
 

@@ -244,22 +244,22 @@ Summary (for readability):
 
 ## Testing
 
-All projects have comprehensive test suites using Vitest + React Testing Library:
+All projects have comprehensive test suites using Vitest + React Testing Library, enforced via GitHub Actions CI on every PR:
 
 ```bash
-# Wallet app — 113 tests (94 baseline + 19 adversarial/boundary)
+# Wallet app — 126 tests (baseline 94 + adversarial 19 + cascade-spend pure 13)
 cd paytm-wallet-app && npm test
 
 # Admin dashboard — 111 tests
 cd admin-dashboard && npm test
 
-# MCP agents — 61 tests (59 baseline + 2 timezone invariants)
+# MCP — 74 tests (agents 59 + timezone 7 + processLoad 10, minus 2 rolled into new)
 cd mcp && npx vitest run
 ```
 
-**285 total tests** covering utilities, mock data layer, Zustand stores, components, pages, RBAC, auth guards, and AI agent functions (intent classification, escalation, ticket management, notification lifecycle) — **including adversarial and boundary cases for Load Guard cap/monthly limits, cascade-spend eligibility chain, NCMC isolation invariants, and timezone-sensitive monthly resets**.
+**311 total tests — zero skipped.** Covers utilities, mock data layer, Zustand stores, components, pages, RBAC, auth guards, AI agent functions, cascade-spend invariants (clean decline with no partial debit, category priority, Gift fallback, expired-Gift exclusion), Load Guard concurrency + idempotency-key replay, and timezone-aware monthly-load boundary.
 
-4 additional tests are intentionally skipped, each linked to a specific code gap in [`docs/scope-and-limitations.md §Adversarial test findings`](docs/scope-and-limitations.md). They will unblock once: (a) an atomic `processLoad` with idempotency-key dedupe is introduced; (b) `calculateCascadeSpend` is extracted as a pure function; (c) a `transactions` service exposes `attemptP2P`/`attemptMerchantPay` with explicit source-wallet parameters; (d) `getMonthlyLoadedPaise` accepts a timezone argument.
+The 4 previously-skipped invariant tests (see earlier review history) have all been unblocked by shipping the corresponding code refactors in commits `07e6d6d` (paytm-wallet-app) and `193d95d` (mcp).
 
 ## Build & Deploy
 
