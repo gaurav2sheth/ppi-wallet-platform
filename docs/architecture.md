@@ -14,8 +14,8 @@ The platform enforces Indian regulatory compliance (RBI PPI Master Directions) a
 |---|---|---|---|
 | `paytm-wallet-app/` | React 19 + Vite 8 + Tailwind CSS v4 + Zustand + Axios | 5173 | Consumer wallet UI (mobile-first SPA) |
 | `admin-dashboard/` | React 19 + Vite 8 + Ant Design v5 + Zustand | 5174 | Admin operations dashboard (desktop) |
-| `mcp/` | Node.js + `@modelcontextprotocol/sdk` + Zod | stdio | 39 Claude AI tools via MCP protocol |
-| `api-server/` | Express.js + `@anthropic-ai/sdk` + CORS | 3001 | REST API (chat, KYC alerts, load guard, sub-wallets) |
+| `mcp/` | Node.js + `@modelcontextprotocol/sdk` + Zod | stdio | 49 Claude AI tools via MCP protocol (8 categories) |
+| `api-server/` | Express.js + `@anthropic-ai/sdk` + CORS | 3001 | REST API (chat, support/KYC agents, load guard, sub-wallets — 28 routes) |
 | `ppi-wallet-api-deploy/` | Express.js | Render | Production deploy mirror of api-server |
 
 ### Git Repositories (4 Separate Repos)

@@ -10,7 +10,7 @@ Build an RBI-regulated PPI Wallet system with:
 - **Consumer Wallet App** — Mobile-first React SPA for end users (add money, pay merchants, P2P transfer, bank transfer, bill pay, passbook, analytics, rewards, KYC, sub-wallets)
 - **Admin Dashboard** — Desktop-first React SPA for operations teams (user management, transaction monitoring, KYC queue, spend analytics, benefits management, AI insights)
 - **Backend API** — Express.js REST API with Claude AI integration (chat, summarisation, KYC alerts, load guard)
-- **MCP Server** — 39 Claude AI tools for natural language wallet operations
+- **MCP Server** — 49 Claude AI tools for natural language wallet operations
 
 All monetary values are stored and transmitted as **integers in paise** (1 INR = 100 paise). Never use floating-point for money.
 
@@ -488,7 +488,7 @@ npx gh-pages -d dist
 Benchmarked against PhonePe Wallet (~600M users), Amazon Pay (~90M), Airtel Payments Bank (~80M).
 
 Key differentiators for this PPI wallet:
-1. **Deep Conversational AI** — 39 MCP tools for natural language wallet operations (no competitor does this)
+1. **Deep Conversational AI** — 49 MCP tools for natural language wallet operations (no competitor does this)
 2. **Corporate Benefits Sub-Wallets** — 5 wallet types with distinct compliance models (NCMC balance cap, FASTag security deposit)
 3. **Proactive Financial Wellness** — Budget manager, spend analytics, AI insights
 4. **Wallet Load Guard** — Real-time RBI compliance validation with AI-powered contextual suggestions
@@ -513,7 +513,7 @@ To recreate this system from scratch:
 
 7. **Build admin dashboard**: Dashboard metrics, User Management (search/filter/detail), Transaction Monitoring, KYC Queue, Benefits Management (bulk load + utilisation).
 
-8. **Add AI layer**: MCP server with 39 tools, Express API for Claude chat/summarisation, KYC expiry alerts.
+8. **Add AI layer**: MCP server with 49 tools (8 categories), Express API for Claude chat/summarisation, KYC expiry alerts.
 
 9. **Wire up data sync**: Wallet app → admin dashboard (dev) and → Render backend (prod).
 
