@@ -1,11 +1,19 @@
-# Compliance Reference — Regulatory Numbers
+# Compliance Reference — Regulatory Framework Summary
 
-> **Single source of truth** for every regulatory numerical limit used across this platform. All other docs (README, CLAUDE.md, `.claude/rules/compliance.md`, `compliance-gap-analysis-v1/v2.md`, product-requirements docs, ADRs) should reference these values and link here rather than restating them.
-
-> ⚠️ **Verification status: SCAFFOLDED — NOT YET VERIFIED AGAINST PRIMARY SOURCE.**
-> The numbers below reflect the author's best knowledge of RBI's PPI Master Directions (Oct 2023, as amended through Dec 2024 circular) at the time of documentation. **Every source-paragraph reference marked `⚠️ TO VERIFY` must be checked against the current RBI circular before any production use.** The placeholder references exist so a compliance reviewer has a structured checklist to run through — they are not a claim of verified citation.
-
-> **Last verified against:** *(to be filled by author)* RBI Master Directions on Prepaid Payment Instruments dated *(circular ref + date)*. **Next review due:** *(6 months from verification date)*.
+> **Scope of this document: FRAMEWORK SUMMARY, not current circular citation.**
+>
+> This document summarises the RBI / PMLA / DPDP regulatory framework that shapes the PPI Wallet reference implementation's design. It is **not** a primary-source citation of currently-in-force circular paragraphs. Author lacks access to the current RBI Master Directions PDF and cannot verify each clause reference as this document sits.
+>
+> **Use this document for:**
+> - Understanding which regulation shapes which implementation choice
+> - Following the link structure across other platform docs (README, CLAUDE.md, `.claude/rules/compliance.md`, PRDs, ADRs) as their shared numbers table
+> - Running a compliance verification pass (each row below is a checklist item)
+>
+> **Do NOT use this document for:**
+> - Any production deployment — the author's summary of regulatory limits is not a substitute for a lawyer reading the current RBI text
+> - Any external claim of RBI compliance — at minimum, every `⚠️ TO VERIFY` marker must be closed out against primary source
+>
+> **Last verified against primary source:** *Not yet verified.* **Target verification date:** *TBD by the author.* When verification is complete, this section becomes: *"Last verified against: RBI Master Directions on Prepaid Payment Instruments dated [date], as amended by circular [ref]. Next review due: [date + 6 months]."*
 
 ---
 

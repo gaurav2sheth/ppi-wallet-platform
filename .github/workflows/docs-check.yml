@@ -1,0 +1,71 @@
+name: Docs Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  broken-links:
+    name: Check for broken internal doc links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify referenced doc paths exist
+        run: |
+          set -e
+          echo "Checking that every .md link in README.md and CLAUDE.md resolves to a real file..."
+          missing=0
+          for f in README.md CLAUDE.md CHANGELOG.md; do
+            if [ ! -f "$f" ]; then continue; fi
+            # Extract docs/... links
+            grep -oE '\]\(docs/[^)]+\.md[^)]*\)' "$f" | sed 's/](//;s/)$//' | sed 's/#.*//' | sort -u | while read path; do
+              if [ ! -f "$path" ]; then
+                echo "MISSING in $f: $path"
+                missing=$((missing+1))
+              fi
+            done
+          done
+          if [ "$missing" -gt 0 ]; then exit 1; fi
+          echo "All checked doc paths resolve."
+
+  forbidden-strings:
+    name: No plaintext credentials or tracked secrets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Grep for tracked secrets / plaintext credentials
+        run: |
+          set -e
+          # Any plaintext admin passwords in README or CLAUDE.md
+          if grep -rnE 'admin123|password123|change-me[^-]' README.md CLAUDE.md docs/ 2>/dev/null | grep -v '.env.example\|change-me-in-env'; then
+            echo "ERROR: plaintext password-like string found outside .env.example"
+            exit 1
+          fi
+          # No .env files committed
+          if git ls-files | grep -E '(^|/)\.env$'; then
+            echo "ERROR: .env file is tracked"
+            exit 1
+          fi
+          # No ANTHROPIC_API_KEY values (not just references)
+          if grep -rnE 'ANTHROPIC_API_KEY=sk-' . 2>/dev/null | grep -v '.env.example\|node_modules'; then
+            echo "ERROR: possible Anthropic API key checked in"
+            exit 1
+          fi
+          echo "No plaintext credentials or tracked secrets detected."
+
+  compliance-consistency:
+    name: Compliance-number spot check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Full-KYC monthly load is ₹2L across all surfaces
+        run: |
+          set -e
+          # Monthly load claim must say 2,00,000 for Full-KYC — not 1,00,000 (old value)
+          if grep -rn 'Monthly load.*₹1,00,000\|Monthly load.*Full-KYC.*1,00,000' README.md .claude/ docs/ 2>/dev/null | grep -v compliance-gap-analysis-v2.md | grep -v 'conservative'; then
+            echo "ERROR: stale Full-KYC monthly load value (₹1,00,000) found; should be ₹2,00,000."
+            exit 1
+          fi
+          echo "Compliance numbers consistent on the spot-checked surfaces."

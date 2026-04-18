@@ -1,0 +1,537 @@
+openapi: 3.1.0
+info:
+  title: PPI Wallet API
+  version: 0.1.0
+  description: |
+    REST API for the PPI Wallet reference implementation. Covers chat / AI agent
+    endpoints, Load Guard validation, sub-wallet operations, KYC agent control,
+    and support ticket lifecycle.
+
+    **Status:** reference implementation. See
+    [scope-and-limitations.md](scope-and-limitations.md) for what is production-
+    ready vs mocked. Monetary values are always **strings in paise** (1 INR = 100 paise).
+
+    **Authentication:** none in demo mode. Production would add OIDC + MFA.
+    See [security.md §3](security.md#3-authentication--authorization).
+
+  contact:
+    name: Gaurav Sheth
+    url: https://github.com/gaurav2sheth/ppi-wallet-platform
+  license:
+    name: All Rights Reserved
+    url: https://github.com/gaurav2sheth/ppi-wallet-platform#license
+
+servers:
+  - url: https://ppi-wallet-api.onrender.com
+    description: Production (Render free tier)
+  - url: http://localhost:3001
+    description: Local dev
+
+tags:
+  - name: Health
+  - name: Chat & AI
+  - name: Load Guard
+  - name: Sub-Wallets
+  - name: KYC Agent
+  - name: Support Agent
+  - name: KYC Alerts
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      summary: Liveness probe
+      responses:
+        '200':
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  tools: { type: integer, description: Registered MCP tool count }
+                  version: { type: string }
+
+  /api/chat:
+    post:
+      tags: [Chat & AI]
+      summary: Admin / user analytics chat (agentic, generic)
+      parameters:
+        - in: query
+          name: role
+          schema: { type: string, enum: [user, admin], default: user }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message: { type: string }
+                context: { type: object, additionalProperties: true }
+      responses:
+        '200':
+          description: Generated reply
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reply: { type: string }
+        '500': { $ref: '#/components/responses/ServerError' }
+        '502': { $ref: '#/components/responses/ServerError' }
+
+  /api/summarise-transactions:
+    post:
+      tags: [Chat & AI]
+      summary: Summarise a transaction list via Claude
+      parameters:
+        - in: query
+          name: role
+          schema: { type: string, enum: [user, admin] }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [transactions]
+              properties:
+                transactions:
+                  type: array
+                  items: { $ref: '#/components/schemas/LedgerEntry' }
+      responses:
+        '200':
+          description: Natural-language summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary: { type: string }
+
+  /api/support/chat:
+    post:
+      tags: [Support Agent]
+      summary: Customer Support Agent — dynamic intent + response
+      description: |
+        UNDERSTAND → INVESTIGATE → RESOLVE → RESPOND → ESCALATE (if needed).
+        If `context` is provided, the agent uses client-provided balance /
+        transaction data (ADR-007).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                user_id: { type: string, example: user_001 }
+                message: { type: string }
+                session_id: { type: string, nullable: true }
+                context:
+                  type: object
+                  properties:
+                    balance_paise: { type: string }
+                    balance_formatted: { type: string }
+                    user_name: { type: string }
+                    kyc_tier: { type: string, enum: [MINIMUM, FULL] }
+                    recent_transactions:
+                      type: array
+                      items: { $ref: '#/components/schemas/LedgerEntry' }
+      responses:
+        '200':
+          description: Agent response
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SupportChatResponse' }
+        '500': { $ref: '#/components/responses/ServerError' }
+
+  /api/support/tickets:
+    get:
+      tags: [Support Agent]
+      summary: List tickets with optional filters
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [OPEN, IN_PROGRESS, RESOLVED] }
+        - in: query
+          name: priority
+          schema: { type: string, enum: [HIGH, MEDIUM, LOW] }
+      responses:
+        '200':
+          description: Ticket list + aggregate stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tickets:
+                    type: array
+                    items: { $ref: '#/components/schemas/Ticket' }
+                  total: { type: integer }
+                  stats: { type: object, additionalProperties: true }
+
+  /api/support/tickets/user/{userId}:
+    get:
+      tags: [Support Agent]
+      summary: Tickets for a specific user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Tickets for user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tickets:
+                    type: array
+                    items: { $ref: '#/components/schemas/Ticket' }
+
+  /api/support/tickets/{ticketId}:
+    get:
+      tags: [Support Agent]
+      summary: Single ticket
+      parameters:
+        - in: path
+          name: ticketId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Ticket details
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Support Agent]
+      summary: Resolve ticket
+      parameters:
+        - in: path
+          name: ticketId
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resolved_by, resolution_notes]
+              properties:
+                resolved_by: { type: string }
+                resolution_notes: { type: string }
+      responses:
+        '200':
+          description: Updated ticket
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Ticket' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/support/sessions/{sessionId}:
+    get:
+      tags: [Support Agent]
+      summary: Chat session details with turns
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Session object
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+
+  /api/support/analytics:
+    get:
+      tags: [Support Agent]
+      summary: Support analytics (chats today, resolution rate, intent distribution)
+      responses:
+        '200':
+          description: Analytics summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_chats_today: { type: integer }
+                  resolved_by_agent: { type: integer }
+                  escalated: { type: integer }
+                  intent_counts: { type: object, additionalProperties: { type: integer } }
+                  sentiment_counts: { type: object, additionalProperties: { type: integer } }
+                  resolution_rate: { type: number, description: Percentage }
+                  avg_turns_to_resolve: { type: number }
+                  ticket_stats: { type: object, additionalProperties: true }
+
+  /api/kyc-alerts/preview:
+    get:
+      tags: [KYC Alerts]
+      summary: Preview at-risk KYC users (read-only)
+      responses:
+        '200':
+          description: List of at-risk users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users: { type: array, items: { type: object } }
+                  count: { type: integer }
+                  total_at_risk_balance: { type: string, description: Formatted ₹ string }
+
+  /api/kyc-alerts/run:
+    post:
+      tags: [KYC Alerts]
+      summary: Run the full KYC alert pipeline
+      responses:
+        '200':
+          description: Run result
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+
+  /api/kyc-agent/run:
+    post:
+      tags: [KYC Agent]
+      summary: Run the KYC Upgrade Agent (7-step loop)
+      responses:
+        '200':
+          description: Run output with decisions, actions, escalations, summary
+          content:
+            application/json:
+              schema: { type: object, additionalProperties: true }
+
+  /api/kyc-agent/runs:
+    get:
+      tags: [KYC Agent]
+      summary: Last 10 agent runs
+      responses:
+        '200':
+          description: Run history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  runs: { type: array, items: { type: object } }
+                  total: { type: integer }
+
+  /api/kyc-agent/escalations:
+    get:
+      tags: [KYC Agent]
+      summary: Query escalations
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [OPEN, IN_PROGRESS, RESOLVED] }
+        - in: query
+          name: priority
+          schema: { type: string, enum: [P1_CRITICAL, P2_HIGH, P3_MEDIUM, P4_LOW] }
+      responses:
+        '200':
+          description: Escalation list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  escalations: { type: array, items: { type: object } }
+                  stats: { type: object }
+
+  /api/kyc-agent/escalations/{escalationId}:
+    patch:
+      tags: [KYC Agent]
+      summary: Resolve or update an escalation
+      parameters:
+        - in: path
+          name: escalationId
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resolved_by: { type: string }
+                notes: { type: string }
+                status: { type: string }
+      responses:
+        '200':
+          description: Updated escalation
+          content:
+            application/json:
+              schema: { type: object }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/wallet/validate-load:
+    post:
+      tags: [Load Guard]
+      summary: Validate (does NOT commit) a wallet top-up against RBI rules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, amount]
+              properties:
+                user_id: { type: string }
+                amount: { type: number, description: Amount in rupees (not paise). Server converts. }
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      allowed: { type: boolean, enum: [true] }
+                      message: { type: string }
+                      new_balance: { type: string }
+                  - type: object
+                    properties:
+                      allowed: { type: boolean, enum: [false] }
+                      blocked_by: { type: string, enum: [BALANCE_CAP, MONTHLY_LOAD, MIN_KYC_CAP] }
+                      user_message: { type: string }
+                      suggestion: { type: string }
+                      max_allowed: { type: integer }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/wallet/load-guard-log:
+    get:
+      tags: [Load Guard]
+      summary: Recent blocked Add Money attempts (last 10)
+      responses:
+        '200':
+          description: Blocked attempts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attempts: { type: array, items: { type: object } }
+
+  /api/wallet/sub-wallets/{userId}:
+    get:
+      tags: [Sub-Wallets]
+      summary: All sub-wallets for a user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Sub-wallet list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sub_wallets:
+                    type: array
+                    items: { $ref: '#/components/schemas/SubWallet' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+components:
+  schemas:
+    LedgerEntry:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        entry_type: { type: string, enum: [CREDIT, DEBIT, HOLD, HOLD_RELEASE] }
+        amount_paise: { type: string, description: Integer paise as string }
+        balance_after_paise: { type: string }
+        transaction_type: { type: string, enum: [ADD_MONEY, MERCHANT_PAY, P2P_TRANSFER, WALLET_TO_BANK, BILL_PAY, REFUND] }
+        description: { type: string }
+        created_at: { type: string, format: date-time }
+        payment_source: { type: string, nullable: true }
+
+    SubWallet:
+      type: object
+      properties:
+        sub_wallet_id: { type: string }
+        type: { type: string, enum: [FOOD, 'NCMC TRANSIT', FASTAG, GIFT, FUEL] }
+        label: { type: string }
+        balance_paise: { type: integer, description: Paise as number (client side) }
+        status: { type: string }
+        monthly_limit_paise: { type: integer }
+        monthly_loaded_paise: { type: integer }
+        eligible_categories: { type: array, items: { type: string } }
+        max_balance_paise: { type: integer, description: NCMC only }
+        is_security_deposit: { type: boolean, description: FASTag only }
+        vehicle_count: { type: integer, description: FASTag only }
+        security_deposit_per_vehicle_paise: { type: integer, description: FASTag only }
+        security_deposit_used_paise: { type: integer, description: FASTag only }
+
+    Ticket:
+      type: object
+      properties:
+        ticket_id: { type: string }
+        user_id: { type: string }
+        name: { type: string }
+        issue_type: { type: string }
+        issue_summary: { type: string }
+        priority: { type: string, enum: [HIGH, MEDIUM, LOW] }
+        status: { type: string, enum: [OPEN, IN_PROGRESS, RESOLVED] }
+        created_at: { type: string }
+        sla_resolve_by: { type: string }
+        is_overdue: { type: boolean }
+        resolved_at: { type: string, nullable: true }
+        resolution_notes: { type: string, nullable: true }
+
+    SupportChatResponse:
+      type: object
+      properties:
+        session_id: { type: string }
+        response_text: { type: string }
+        suggested_actions: { type: array, items: { type: string } }
+        tools_used: { type: array, items: { type: string } }
+        intent_detected: { type: string }
+        confidence: { type: number }
+        urgency: { type: string, enum: [HIGH, MEDIUM, LOW] }
+        sentiment: { type: string, enum: [FRUSTRATED, NEUTRAL, POSITIVE] }
+        resolved: { type: boolean }
+        ticket_id: { type: string, nullable: true }
+        escalated: { type: boolean }
+        helpline_info: { type: object, nullable: true, additionalProperties: true }
+        response_time_ms: { type: integer }
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        detail: { type: string, nullable: true }
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    ServerError:
+      description: Internal or upstream error (5xx)
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
