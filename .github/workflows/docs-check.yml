@@ -38,9 +38,15 @@ jobs:
       - name: Grep for tracked secrets / plaintext credentials
         run: |
           set -e
-          # Any plaintext admin passwords in README or CLAUDE.md
-          if grep -rnE 'admin123|password123|change-me[^-]' README.md CLAUDE.md docs/ 2>/dev/null | grep -v '.env.example\|change-me-in-env'; then
-            echo "ERROR: plaintext password-like string found outside .env.example"
+          # Any plaintext admin passwords outside the explicitly-allowed
+          # security / scope docs (where mentioning 'admin123' is part of
+          # documenting the known gap, not advertising a credential) or
+          # .env.example (template files).
+          if grep -rnE 'admin123|password123|change-me[^-]' README.md CLAUDE.md docs/ 2>/dev/null \
+              | grep -v '.env.example\|change-me-in-env' \
+              | grep -v 'docs/security.md\|docs/scope-and-limitations.md'; then
+            echo "ERROR: plaintext password-like string found in an unexpected doc."
+            echo "Allowed locations: .env.example, docs/security.md, docs/scope-and-limitations.md"
             exit 1
           fi
           # No .env files committed

@@ -60,7 +60,7 @@ ppi-wallet-api-deploy/   -> github.com/gaurav2sheth/ppi-wallet-api-deploy
      v                            v
 +--------------------+   +------------------------+
 |  MCP Server (stdio) |   |  Claude AI (Anthropic)  |
-|  39 tools, Zod      |   |  Sonnet 4 + Haiku 4.5   |
+|  49 tools, Zod      |   |  Sonnet 4 + Haiku 4.5   |
 |  wallet-mcp-server.js|   +------------------------+
 +----+----------------+
      |
@@ -82,7 +82,7 @@ ppi-wallet-api-deploy/   -> github.com/gaurav2sheth/ppi-wallet-api-deploy
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/health` | Health check (18 tools, v1.0.0) |
+| GET | `/health` | Health check — reports tool count, version, and endpoint map |
 | POST | `/api/chat` | Claude AI chat (query param: `role=admin\|user`) |
 | POST | `/api/summarise-transactions` | AI transaction summary (Claude Sonnet) |
 | GET | `/api/kyc-alerts/preview` | Preview at-risk KYC users |
@@ -129,7 +129,7 @@ The system prompt is differentiated by role:
 
 ### 5.1 Overview
 
-The MCP server (`mcp/wallet-mcp-server.js`) exposes 39 tools to Claude Desktop via the Model Context Protocol stdio transport. It uses `@modelcontextprotocol/sdk` for the server framework and Zod for input schema validation.
+The MCP server (`mcp/wallet-mcp-server.js`) exposes 49 tools to Claude Desktop via the Model Context Protocol stdio transport. It uses `@modelcontextprotocol/sdk` for the server framework and Zod for input schema validation.
 
 ### 5.2 Claude Desktop Configuration
 
@@ -452,13 +452,9 @@ Paytm PODS design language:
 | `COMPLIANCE_OFFICER` | Dashboard, users (read), transactions, KYC, analytics |
 | `MARKETING_MANAGER` | Dashboard, analytics |
 
-### 8.4 Mock Credentials
+### 8.4 Demo Credentials
 
-| Role | Username | Password |
-|---|---|---|
-| Super Admin | `admin` | `admin123` |
-| Business Admin | `business` | `admin123` |
-| CS Agent | `support` | `admin123` |
+Demo mode uses three hardcoded fallback roles (Super Admin, Business Admin, CS Agent). Values are loaded from environment variables documented in `admin-dashboard/.env.example`. See [`security.md §3 Authentication & Authorization`](security.md#3-authentication--authorization) for the auth gap analysis and production requirements (OIDC, MFA, rotation, backend RBAC).
 
 ### 8.5 Key Components
 

@@ -11,7 +11,7 @@ Build an RBI-regulated PPI (Prepaid Payment Instrument) Wallet system with:
 - **Consumer Wallet App** -- Mobile-first React SPA for end users (add money, pay merchants, P2P transfer, bank transfer, bill pay, passbook, analytics, rewards, KYC, sub-wallets)
 - **Admin Dashboard** -- Desktop-first React SPA for operations teams (user management, transaction monitoring, KYC queue, spend analytics, benefits management, AI insights)
 - **Backend API** -- Express.js REST API with Claude AI integration (chat, summarisation, KYC alerts, load guard)
-- **MCP Server** -- 39 Claude AI tools for natural language wallet operations
+- **MCP Server** -- 49 Claude AI tools for natural language wallet operations
 
 All monetary values are stored and transmitted as **integers in paise** (1 INR = 100 paise). Never use floating-point for money.
 
@@ -684,13 +684,9 @@ All transactions in the wallet app follow the saga pattern with this consistent 
 | COMPLIANCE_OFFICER | Dashboard, users (read-only), transactions (read/write), KYC (read/write), analytics |
 | MARKETING_MANAGER | Dashboard, analytics |
 
-### 8.3 Mock Admin Credentials
+### 8.3 Demo Admin Credentials
 
-| Role | Username | Password |
-|------|----------|----------|
-| Super Admin | admin | admin123 |
-| Business Admin | business | admin123 |
-| CS Agent | support | admin123 |
+Three demo roles (Super Admin, Business Admin, CS Agent) use env-var-driven fallback credentials. See `admin-dashboard/.env.example` for the variable names and [`security.md §3`](security.md#3-authentication--authorization) for the production auth gap analysis.
 
 ### 8.4 Dashboard Page (`/`)
 - **Overview metrics cards:** Total Users, Active Wallets, Total Transaction Volume, Revenue
@@ -974,7 +970,7 @@ Benchmarked against PhonePe Wallet (~600M users), Amazon Pay (~90M), Airtel Paym
 
 Key differentiators for this PPI wallet:
 
-1. **Deep Conversational AI** -- 39 MCP tools for natural language wallet operations (no competitor offers this)
+1. **Deep Conversational AI** -- 49 MCP tools for natural language wallet operations (no competitor offers this)
 2. **Corporate Benefits Sub-Wallets** -- 5 wallet types with distinct compliance models (NCMC balance cap, FASTag security deposit)
 3. **Proactive Financial Wellness** -- Budget manager, spend analytics, AI-powered insights
 4. **Wallet Load Guard** -- Real-time RBI compliance validation with AI-powered contextual suggestions
