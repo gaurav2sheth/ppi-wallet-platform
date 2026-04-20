@@ -353,8 +353,6 @@ Paytm PODS — consistent across both frontends:
 | Cyan | `#00B9F1` | Accents, links, highlights |
 | Green | `#12B76A` | Success states, positive amounts |
 
-> **Attribution.** Paytm PODS colour tokens and the `paytm-wallet-app/` directory name are used here as visual reference material for a PPSL-domain reference implementation authored by a PPSL employee. Paytm brand assets, logos, and app-specific UX flows are the property of Paytm Payment Services Limited. Reference-only screenshots are in [`docs/ui-reference/`](docs/ui-reference/README.md).
-
 All monetary values stored as **integers in paise** (1 INR = 100 paise). Displayed as `₹X,XX,XXX.XX` using `en-IN` locale.
 
 ## License

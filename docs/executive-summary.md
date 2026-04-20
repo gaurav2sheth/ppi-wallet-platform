@@ -44,7 +44,7 @@ Three distinct asks depending on intended direction; pick whichever matches curr
 
 | Risk category | Current exposure | Mitigation status |
 |---------------|------------------|-------------------|
-| **IP / authorship** | Low | Repo explicitly framed as personal project, not PPSL property. [`README.md#author--ownership`](../README.md#author--ownership) makes this unambiguous. |
+| **IP / authorship** | Low | Repo explicitly framed as a personal learning project. [`README.md#author--ownership`](../README.md#author--ownership) makes this unambiguous. |
 | **Paytm brand / design-token use** | Medium | Attribution note in README acknowledges PODS ownership by PPSL. **Legal sign-off pending before any external narrative.** |
 | **Regulatory overclaim** | Low→Medium | Compliance numbers reference RBI framework but citations are marked ⚠️ TO VERIFY. Status banner explicitly says "not PPSL production code". Risk becomes Medium if any numbers in the repo are taken at face value by an external reviewer. |
 | **Security / data** | Low | All data is synthetic (verified by sweep 2026-04-17); no real PII, no real customer names, no real logs. Admin credentials are hardcoded demo-only and documented as such. No live banking integrations. |

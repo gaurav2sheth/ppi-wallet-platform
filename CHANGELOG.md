@@ -17,7 +17,6 @@ Versions are implicit (pre-1.0 rolling releases); dates are in IST.
 - `docs/ui-reference/` — Renamed from `Paytm App UI screenshots/`, added README with attribution
 - `docs/build-status.html` — Renamed from `ppsl-ppi-wallet-dashboard.html`
 - `.github/CODEOWNERS` — Governance routing for compliance + ADR paths
-- `README.md#author--ownership` — Author & Ownership section (Option A: personal project, not PPSL property)
 - `.env.example` files in all 4 sub-repos (paytm-wallet-app, admin-dashboard, mcp, ppi-wallet-api-deploy)
 - README "Where's the code?" callout linking to all 4 sibling repos
 - 21 new adversarial / boundary tests across wallet app + MCP (19 passing + 2 passing + 4 skipped documenting code gaps). Total: 285 tests.
