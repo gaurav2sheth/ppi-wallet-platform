@@ -13,9 +13,9 @@ Versions are implicit (pre-1.0 rolling releases); dates are in IST.
 - `docs/security.md` — Threat model, secret management, mock-mode guardrails, rate limiting gaps, Mock Data Policy
 - `docs/edge-cases.md` — 68 edge-case specs (Load Guard racing, cap math, KYC downgrade, refund flows)
 - `docs/scope-and-limitations.md` — What's real vs mocked; paired production requirements for every gap
-- `docs/compliance-reference.md` — **Single source of truth for regulatory numbers**; retrofitted into README / rules / PRD / gap-v2
-- `docs/ui-reference/` — Renamed from `Paytm App UI screenshots/`, added README with attribution
-- `docs/build-status.html` — Renamed from `ppsl-ppi-wallet-dashboard.html`
+- `docs/compliance-reference.md` — **Single source of truth for regulatory numbers**; reference for all compliance claims
+- `docs/ui-reference/` — Added with UI reference documentation
+- `docs/build-status.html` — Build status dashboard
 - `.github/CODEOWNERS` — Governance routing for compliance + ADR paths
 - `.env.example` files in all 4 sub-repos (paytm-wallet-app, admin-dashboard, mcp, ppi-wallet-api-deploy)
 - README "Where's the code?" callout linking to all 4 sibling repos
@@ -31,7 +31,7 @@ Versions are implicit (pre-1.0 rolling releases); dates are in IST.
 - All regulatory-number claims now defer to `docs/compliance-reference.md`; downstream docs link there rather than restating
 
 ### Fixed
-- **Data hygiene:** Real employer names (`Paytm`, `TCS`, `Paytm (Employer)`) in mock seed data replaced with fictional equivalents (Acme Payments Corp, Nimbus Technologies, Meridian Logistics, Helios Consulting) across `mcp/mock-data.js` and `paytm-wallet-app/src/api/mock.ts`. Merchant-category references (Swiggy, Zomato, etc.) retained per the new Mock Data Policy in `security.md §11`.
+- **Data hygiene:** Employer names in mock seed data replaced with fictional equivalents (Acme Payments Corp, Nimbus Technologies, Meridian Logistics, Helios Consulting) across `mcp/mock-data.js` and `paytm-wallet-app/src/api/mock.ts`. Merchant-category references (Swiggy, Zomato, etc.) retained per the new Mock Data Policy in `security.md §11`.
 - Stale "₹1L RBI cap" wording in `.claude/rules/sub-wallets.md` and `ADR-003` corrected to reference the tier-aware RBI caps (₹2L Full-KYC / ₹10K Min-KYC) and the code's conservative ₹1L implementation baseline.
 
 ### Known Gaps (not blockers; tracked)
