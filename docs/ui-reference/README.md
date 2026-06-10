@@ -1,10 +1,10 @@
 # UI Reference Screenshots
 
-Reference screenshots of the Paytm consumer wallet app used as visual source material when designing the PPI Wallet reference implementation's UI. The screenshots were taken during the initial design phase to align the demo's look-and-feel with familiar Paytm patterns (wallet strip, sub-wallet cards, passbook list, transaction detail).
+Reference screenshots of a consumer wallet app used as visual source material when designing the PPI Wallet reference implementation's UI. The screenshots were taken during the initial design phase to establish a familiar wallet interface pattern (wallet strip, sub-wallet cards, passbook list, transaction detail).
 
 ## Attribution
 
-These are screenshots of the **Paytm consumer app**, owned by Paytm Payment Services Limited (PPSL). They are reproduced here as visual reference only — not as creative work of this repository.
+These are reference screenshots of a commercial wallet app. They are reproduced here as visual design reference only — not as creative work of this repository.
 
 ## Contents
 

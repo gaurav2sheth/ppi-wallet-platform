@@ -22,7 +22,7 @@ Versions are implicit (pre-1.0 rolling releases); dates are in IST.
 - 21 new adversarial / boundary tests across wallet app + MCP (19 passing + 2 passing + 4 skipped documenting code gaps). Total: 285 tests.
 
 ### Changed
-- README framing softened from "production-grade" → "reference implementation / platform blueprint", then further reframed with a top-of-README status banner ("AI-assisted reference implementation; not PPSL production code")
+- README framing softened from "production-grade" → "reference implementation / platform blueprint", then further reframed with a top-of-README status banner ("Personal reference implementation; mock data only")
 - README License section made consistent with the public repo
 - README now lists the 49 MCP tools by category (8 categories after KYC Agent + Support Agent additions)
 - README Full-KYC monthly load cap corrected ₹1L → ₹2L (code already enforced ₹2L; docs had drifted)

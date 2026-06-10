@@ -134,16 +134,6 @@ All Claude API calls have keyword/template fallback. Agents work at $0 cost with
 
 See `docs/` for detailed specs (all converted from original .docx to markdown):
 - `docs/architecture.md` — Full system architecture
-- `docs/product-requirements.md` — PRD v1.1 with RBI compliance
-- `docs/product-requirements-v1.md` — PRD v1.0 original requirements
-- `docs/product-document.md` — Product overview and vision
-- `docs/engineering-brief.md` — API spec, DB schema, escrow engine
-- `docs/epic-breakdown.md` — Sprint-level epic breakdown
-- `docs/admin-dashboard-prd.md` — Admin dashboard requirements
-- `docs/compliance-gap-analysis-v1.md` — Initial compliance gaps
-- `docs/compliance-gap-analysis-v2.md` — Updated gaps with remediation
-- `docs/competitive-benchmark.md` — PPSL vs competitors
-- `docs/partner-bank-evaluation.md` — Partner bank evaluation matrix
 - `docs/claude-code-pm-guide.md` — Claude Code PM guide
 - `docs/scope-and-limitations.md` — What's real vs mocked, anti-patterns, production gap list (the "what this is and isn't" doc)
 - `docs/ai-agents.md` — AI agents architecture, API endpoints, data flows, cost estimates

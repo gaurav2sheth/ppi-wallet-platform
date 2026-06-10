@@ -1,6 +1,6 @@
 # PPI Wallet Platform
 
-> **Status:** AI-assisted reference implementation built with Claude Code as a learning and prototyping exercise. Demonstrates a full RBI-compliant PPI wallet architecture end-to-end — consumer app, admin ops, MCP tool layer, and autonomous AI agents — against mock data and client-side state. Not PPSL production code; not currently integrated with live banking rails, real KYC providers, or production ledgers. See [`docs/scope-and-limitations.md`](docs/scope-and-limitations.md) for a full statement of scope and production gaps.
+> **Status:** Personal reference implementation built with Claude Code as a learning and prototyping exercise. Demonstrates a full RBI-compliant PPI wallet architecture end-to-end — consumer app, admin ops, MCP tool layer, and autonomous AI agents — against mock data and client-side state. Mock data only; not currently integrated with live banking rails, real KYC providers, or production ledgers. See [`docs/scope-and-limitations.md`](docs/scope-and-limitations.md) for a full statement of scope and production gaps.
 
 A reference **Prepaid Payment Instrument (PPI) Wallet** platform modelled on RBI's PPI Master Directions, featuring a consumer mobile wallet, an admin operations dashboard, an AI-powered API server, 49 Claude AI tools via MCP, and 3 autonomous AI agents for KYC compliance and customer support.
 
@@ -277,29 +277,13 @@ npx tsc -b && npx vite build && npx gh-pages -d dist
 
 ## Documentation
 
-All source `.docx` documents have been converted to markdown and organized in `docs/`:
+All reference documentation has been organized in `docs/`:
 
-### Product & Architecture
+### Architecture & Technical Specs
 
 | File | Description |
 |------|-------------|
-| `docs/product-document.md` | Product overview and vision |
-| `docs/product-requirements-v1.md` | PRD v1.0 — original requirements |
-| `docs/product-requirements.md` | PRD v1.1 — expanded with RBI compliance |
 | `docs/architecture.md` | Full system architecture |
-| `docs/engineering-brief.md` | API spec, DB schema, escrow reconciliation engine |
-| `docs/epic-breakdown.md` | Sprint-level epic breakdown |
-| `docs/admin-dashboard-prd.md` | Admin dashboard requirements |
-
-### Compliance & Strategy
-
-| File | Description |
-|------|-------------|
-| `docs/compliance-gap-analysis-v1.md` | Initial RBI/PMLA compliance gap analysis |
-| `docs/compliance-gap-analysis-v2.md` | Updated compliance gaps with remediation plans |
-| `docs/competitive-benchmark.md` | PPSL vs PhonePe, Amazon Pay, Airtel wallets |
-| `docs/partner-bank-evaluation.md` | Yes Bank, IndusInd, RBL, IDFC First evaluation |
-| `docs/claude-code-pm-guide.md` | Claude Code PM guide for engineering teams |
 
 ### AI Agents
 
@@ -357,7 +341,7 @@ All monetary values stored as **integers in paise** (1 INR = 100 paise). Display
 
 ## License
 
-All rights reserved. This is a personal learning project by the author; not open source and not licensed for redistribution. Code and documentation may reference patterns and frameworks from PPSL's domain but represent independent work unless otherwise noted.
+All rights reserved. This is a personal learning project by the author; not open source and not licensed for redistribution.
 
 For licensing inquiries (including Apache-2.0 / MIT licensing for portions), contact the repo owner via GitHub. See [`docs/security.md` §11](docs/security.md#11-disclosure-policy) for vulnerability disclosure.
 
