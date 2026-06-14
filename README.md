@@ -13,7 +13,7 @@ Contains: consumer mobile wallet, admin operations dashboard, Express API server
 | What you're looking for | Repo |
 |------------------------|------|
 | Consumer wallet app (React 19 + Vite + Tailwind) | [ppi-wallet-app](https://github.com/gaurav2sheth/ppi-wallet-app) |
-| Admin dashboard (React 19 + Ant Design) | [ppi-wallet-admin-dashboard](https://github.com/gaurav2sheth/ppi-wallet-admin-dashboard) |
+| Admin dashboard (React 19 + Ant Design) | [ppi-wallet-admin](https://github.com/gaurav2sheth/ppi-wallet-admin) |
 | MCP server + AI agents (Node.js) | [ppi-wallet-mcp](https://github.com/gaurav2sheth/ppi-wallet-mcp) |
 | Production API deploy (Express on Render) | [ppi-wallet-api-deploy](https://github.com/gaurav2sheth/ppi-wallet-api-deploy) |
 | **This repo** — docs, ADRs, CLAUDE.md context, diagrams | ppi-wallet-platform |
@@ -103,7 +103,7 @@ cd api-server && npm install && npm run dev
 
 ### Admin Dashboard Credentials (Demo Mode)
 
-Demo credentials are loaded from environment variables. See [`admin-dashboard/.env.example`](https://github.com/gaurav2sheth/ppi-wallet-admin-dashboard/blob/main/.env.example) for the variable names and copy it to `.env` with values of your choice.
+Demo credentials are loaded from environment variables. See [`ppi-wallet-admin/.env.example`](https://github.com/gaurav2sheth/ppi-wallet-admin/blob/main/.env.example) for the variable names and copy it to `.env` with values of your choice.
 
 Three demo roles are wired: **Super Admin**, **Business Admin**, **CS Agent**. All three use hardcoded demo auth — no real authentication, no session rotation, no MFA. This is explicitly a demo-only pattern; see [`docs/security.md` §3 Auth gaps](docs/security.md#3-authentication--authorization) for the production auth requirements (OIDC, MFA, rotation, backend RBAC enforcement).
 

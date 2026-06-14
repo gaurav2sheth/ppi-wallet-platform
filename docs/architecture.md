@@ -13,7 +13,7 @@ The platform enforces Indian regulatory compliance (RBI PPI Master Directions) a
 | Repo / Directory | Tech Stack | Port | Purpose |
 |---|---|---|---|
 | `paytm-wallet-app/` | React 19 + Vite 8 + Tailwind CSS v4 + Zustand + Axios | 5173 | Consumer wallet UI (mobile-first SPA) |
-| `admin-dashboard/` | React 19 + Vite 8 + Ant Design v5 + Zustand | 5174 | Admin operations dashboard (desktop) |
+| `ppi-wallet-admin/` | React 19 + Vite 8 + Ant Design v5 + Zustand | 5174 | Admin operations dashboard (desktop) |
 | `mcp/` | Node.js + `@modelcontextprotocol/sdk` + Zod | stdio | 49 Claude AI tools via MCP protocol (8 categories) |
 | `api-server/` | Express.js + `@anthropic-ai/sdk` + CORS | 3001 | REST API (chat, support/KYC agents, load guard, sub-wallets — 28 routes) |
 | `ppi-wallet-api-deploy/` | Express.js | Render | Production deploy mirror of api-server |
@@ -22,7 +22,7 @@ The platform enforces Indian regulatory compliance (RBI PPI Master Directions) a
 
 ```
 paytm-wallet-app/       -> github.com/gaurav2sheth/ppi-wallet-app
-admin-dashboard/         -> github.com/gaurav2sheth/ppi-wallet-admin-dashboard
+ppi-wallet-admin/         -> github.com/gaurav2sheth/ppi-wallet-admin
 mcp/                     -> github.com/gaurav2sheth/ppi-wallet-mcp
 api-server/              -> (local only, deployed via ppi-wallet-api-deploy)
 ppi-wallet-api-deploy/   -> github.com/gaurav2sheth/ppi-wallet-api-deploy
@@ -454,7 +454,7 @@ Paytm PODS design language:
 
 ### 8.4 Demo Credentials
 
-Demo mode uses three hardcoded fallback roles (Super Admin, Business Admin, CS Agent). Values are loaded from environment variables documented in `admin-dashboard/.env.example`. See [`security.md §3 Authentication & Authorization`](security.md#3-authentication--authorization) for the auth gap analysis and production requirements (OIDC, MFA, rotation, backend RBAC).
+Demo mode uses three hardcoded fallback roles (Super Admin, Business Admin, CS Agent). Values are loaded from environment variables documented in `ppi-wallet-admin/.env.example`. See [`security.md §3 Authentication & Authorization`](security.md#3-authentication--authorization) for the auth gap analysis and production requirements (OIDC, MFA, rotation, backend RBAC).
 
 ### 8.5 Key Components
 
