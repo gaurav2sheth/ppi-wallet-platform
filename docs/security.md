@@ -244,7 +244,7 @@ XSS would be possible if malicious content were rendered unescaped. React's defa
 ### 7.3 Recommended CSP (not yet shipped)
 
 ```html
-<!-- suggested addition to paytm-wallet-app/index.html and admin-dashboard/index.html -->
+<!-- suggested addition to paytm-wallet-app/index.html and ppi-wallet-admin/index.html -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
   script-src 'self';
@@ -375,7 +375,7 @@ All user, employer, transaction, and account records in this codebase are synthe
 - **Employer records** use fictional company names (Acme Payments Corp, Nimbus Technologies, Meridian Logistics, Helios Consulting). Real employer names must never be used, even for demo purposes.
 - **Transaction records** are generated via PRNG against the fictional users.
 - **Merchant category references** (e.g., Swiggy, Zomato as food delivery examples; HP, IOCL, BPCL, Shell as fuel retailers) are retained because they illustrate RBI-defined merchant categories, not customer relationships. These are acceptable.
-- **Demo admin credentials** are hardcoded fallback values documented via `.env.example` in `admin-dashboard/`. They are never representative of real accounts.
+- **Demo admin credentials** are hardcoded fallback values documented via `.env.example` in `ppi-wallet-admin/`. They are never representative of real accounts.
 
 ### Rules for contributors
 

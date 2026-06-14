@@ -769,7 +769,7 @@ All UI display of monetary values MUST use `formatPaise()`. Never format manuall
 cd paytm-wallet-app && npm install && npm run dev
 
 # Admin dashboard
-cd admin-dashboard && npm install && npm run dev
+cd ppi-wallet-admin && npm install && npm run dev
 
 # API server (requires ANTHROPIC_API_KEY)
 cd api-server && npm install && npm run dev
@@ -784,7 +784,7 @@ cd paytm-wallet-app
 /usr/local/bin/node ./node_modules/.bin/vite build      # build
 
 # Admin dashboard
-cd admin-dashboard
+cd ppi-wallet-admin
 /usr/local/bin/node ./node_modules/.bin/tsc --noEmit
 /usr/local/bin/node ./node_modules/.bin/vite build
 ```

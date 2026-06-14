@@ -390,7 +390,7 @@ Total: ₹10,000 + ₹90,000 + ₹3,000 + ₹3,000 + ₹300 = **₹1,06,300**
 - No partial load (either all or nothing)
 - Employer's ₹15,000 is not captured
 
-**Current status:** ⚠️ Load Guard runs on user loads; employer bulk load path needs same gating. [TODO — verify in `admin-dashboard/src/pages/BenefitsPage.tsx`]
+**Current status:** ⚠️ Load Guard runs on user loads; employer bulk load path needs same gating. [TODO — verify in `ppi-wallet-admin/src/pages/BenefitsPage.tsx`]
 
 ---
 

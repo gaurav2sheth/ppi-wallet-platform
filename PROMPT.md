@@ -499,7 +499,7 @@ Key differentiators for this PPI wallet:
 
 To recreate this system from scratch:
 
-1. **Set up 4 repos**: wallet-app (React+Vite), admin-dashboard (React+Vite+AntDesign), mcp (Node.js MCP server), api-server (Express.js)
+1. **Set up 4 repos**: wallet-app (React+Vite), ppi-wallet-admin (React+Vite+AntDesign), mcp (Node.js MCP server), api-server (Express.js)
 
 2. **Build the mock data layer first** (`mock.ts`): localStorage-persisted wallet balance, ledger, sub-wallets with seed data. This lets the entire UI work without any backend.
 
