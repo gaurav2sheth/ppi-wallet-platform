@@ -6,8 +6,8 @@ Multi-repo workspace for an RBI-regulated Prepaid Payment Instrument (PPI) Walle
 
 | Repo | Tech | Port | Purpose |
 |------|------|------|---------|
-| `paytm-wallet-app/` | React 19 + Vite + Tailwind | 5173 | Consumer wallet UI (mobile-first) |
-| `admin-dashboard/` | React 19 + Vite + Ant Design | 5174 | Admin operations dashboard (desktop) |
+| `ppi-wallet-app/` | React 19 + Vite + Tailwind | 5173 | Consumer wallet UI (mobile-first) |
+| `ppi-wallet-admin/` | React 19 + Vite + Ant Design | 5174 | Admin operations dashboard (desktop) |
 | `mcp/` | Node.js + Zod | stdio | 49 Claude AI tools via MCP protocol |
 | `api-server/` | Express.js + Claude API | 3001 | REST API (chat, KYC alerts, load guard, sub-wallets, AI agents) |
 | `ppi-wallet-api-deploy/` | Express.js | Render | Production deploy of api-server |
@@ -16,10 +16,10 @@ Multi-repo workspace for an RBI-regulated Prepaid Payment Instrument (PPI) Walle
 
 ```bash
 # Wallet app (works standalone with built-in mock data)
-cd paytm-wallet-app && npm install && npm run dev
+cd ppi-wallet-app && npm install && npm run dev
 
 # Admin dashboard
-cd admin-dashboard && npm install && npm run dev
+cd ppi-wallet-admin && npm install && npm run dev
 
 # API server (requires ANTHROPIC_API_KEY)
 cd api-server && npm install && npm run dev
@@ -29,13 +29,13 @@ cd api-server && npm install && npm run dev
 
 ```bash
 # Wallet app → GitHub Pages
-cd paytm-wallet-app
+cd ppi-wallet-app
 /usr/local/bin/node ./node_modules/.bin/tsc --noEmit   # type-check
 /usr/local/bin/node ./node_modules/.bin/vite build      # build
 /usr/local/bin/node ./node_modules/.bin/gh-pages -d dist # deploy
 
 # Admin dashboard → GitHub Pages
-cd admin-dashboard
+cd ppi-wallet-admin
 /usr/local/bin/node ./node_modules/.bin/vite build
 /usr/local/bin/node ./node_modules/.bin/gh-pages -d dist
 
@@ -56,7 +56,7 @@ cd admin-dashboard
 - Currency display: `₹X,XX,XXX.XX` using `en-IN` locale with 2 decimal places.
 - UUIDs for all entity IDs. Idempotency keys on every transaction POST.
 - ISO 8601 UTC timestamps everywhere.
-- Design system: Paytm PODS — Navy #002E6E, Cyan #00B9F1, Green #12B76A.
+- Design system: Primary design system — Navy #002E6E, Cyan #00B9F1, Green #12B76A.
 - Wallet app uses HashRouter (required for GitHub Pages).
 - Both frontends use Zustand for state with localStorage persistence.
 - Node path on this machine: `/usr/local/bin/node` (no nvm).
@@ -71,16 +71,16 @@ git clone https://github.com/gaurav2sheth/ppi-wallet-platform.git PPI_Wallet
 cd PPI_Wallet
 
 # 2. Clone the code repos inside it
-git clone https://github.com/gaurav2sheth/ppi-wallet-app.git paytm-wallet-app
-git clone https://github.com/gaurav2sheth/ppi-wallet-admin-dashboard.git admin-dashboard
+git clone https://github.com/gaurav2sheth/ppi-wallet-app.git ppi-wallet-app
+git clone https://github.com/gaurav2sheth/ppi-wallet-ppi-wallet-admin.git ppi-wallet-admin
 git clone https://github.com/gaurav2sheth/ppi-wallet-mcp.git mcp
 git clone https://github.com/gaurav2sheth/ppi-wallet-api-deploy.git ppi-wallet-api-deploy
 ```
 
 | Directory | GitHub Repo |
 |-----------|-------------|
-| `paytm-wallet-app/` | [ppi-wallet-app](https://github.com/gaurav2sheth/ppi-wallet-app) |
-| `admin-dashboard/` | [ppi-wallet-admin-dashboard](https://github.com/gaurav2sheth/ppi-wallet-admin-dashboard) |
+| `ppi-wallet-app/` | [ppi-wallet-app](https://github.com/gaurav2sheth/ppi-wallet-app) |
+| `ppi-wallet-admin/` | [ppi-wallet-ppi-wallet-admin](https://github.com/gaurav2sheth/ppi-wallet-ppi-wallet-admin) |
 | `mcp/` | [ppi-wallet-mcp](https://github.com/gaurav2sheth/ppi-wallet-mcp) |
 | `api-server/` | (local only, deployed via ppi-wallet-api-deploy) |
 | `ppi-wallet-api-deploy/` | [ppi-wallet-api-deploy](https://github.com/gaurav2sheth/ppi-wallet-api-deploy) |

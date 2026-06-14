@@ -1,6 +1,6 @@
 # Data Models & Storage
 
-## Core TypeScript Interfaces (paytm-wallet-app/src/types/api.types.ts)
+## Core TypeScript Interfaces (ppi-wallet-app/src/types/api.types.ts)
 
 ### LedgerEntry (append-only transaction record)
 ```

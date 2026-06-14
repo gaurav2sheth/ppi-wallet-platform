@@ -1,6 +1,6 @@
 # PPI Wallet Platform — Recreation Prompt
 
-Use this document as a comprehensive prompt to recreate the Paytm PPI (Prepaid Payment Instrument) Wallet App and Admin Dashboard from scratch. It consolidates architecture, product requirements, compliance rules, data models, API contracts, and implementation details from all project documents.
+Use this document as a comprehensive prompt to recreate the PPI (Prepaid Payment Instrument) Wallet App and Admin Dashboard from scratch. It consolidates architecture, product requirements, compliance rules, data models, API contracts, and implementation details from all project documents.
 
 ---
 
@@ -23,7 +23,7 @@ All monetary values are stored and transmitted as **integers in paise** (1 INR =
 |-------|-----------|
 | Framework | React 19 + TypeScript |
 | Bundler | Vite 8 |
-| Styling | Tailwind CSS v4 with Paytm PODS design tokens |
+| Styling | Tailwind CSS v4 with custom design tokens |
 | Routing | React Router v7 (HashRouter for GitHub Pages) |
 | State | Zustand with localStorage persistence |
 | HTTP | Axios with 3-tier fallback (Vite middleware → Express API → client-side mock) |
@@ -54,7 +54,7 @@ All monetary values are stored and transmitted as **integers in paise** (1 INR =
 
 ---
 
-## 3. Design System — Paytm PODS
+## 3. Design System
 
 ### Colour Palette
 | Token | Hex | Usage |
@@ -292,7 +292,7 @@ The ₹1,00,000 RBI balance cap applies to the **combined total** of main wallet
 | `/rewards` | RewardsPage | Scratch cards, cashback history |
 
 ### Home Page — WalletStrip Component
-The WalletStrip is the primary UI element, designed to match Paytm's real app:
+The WalletStrip is the primary UI element for wallet interaction:
 - **Collapsed**: Shows total balance (main + sub-wallets), Full KYC badge, chevron to expand
 - **Expanded**: Vertical list — Main Wallet ₹X, Food Wallet ₹X, NCMC Transit ₹X, FASTag Wallet ₹X (Deposit), Gift Wallet ₹X, Fuel Wallet ₹X — each tappable to navigate to detail page
 - Below: Add Money section with quick-add buttons (+₹100, +₹500, +₹1,000 Popular, Custom)

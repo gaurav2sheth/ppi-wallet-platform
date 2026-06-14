@@ -17,7 +17,7 @@ Versions are implicit (pre-1.0 rolling releases); dates are in IST.
 - `docs/ui-reference/` — Added with UI reference documentation
 - `docs/build-status.html` — Build status dashboard
 - `.github/CODEOWNERS` — Governance routing for compliance + ADR paths
-- `.env.example` files in all 4 sub-repos (paytm-wallet-app, admin-dashboard, mcp, ppi-wallet-api-deploy)
+- `.env.example` files in all 4 sub-repos (ppi-wallet-app, ppi-wallet-admin, ppi-wallet-mcp, ppi-wallet-api)
 - README "Where's the code?" callout linking to all 4 sibling repos
 - 21 new adversarial / boundary tests across wallet app + MCP (19 passing + 2 passing + 4 skipped documenting code gaps). Total: 285 tests.
 
@@ -31,7 +31,7 @@ Versions are implicit (pre-1.0 rolling releases); dates are in IST.
 - All regulatory-number claims now defer to `docs/compliance-reference.md`; downstream docs link there rather than restating
 
 ### Fixed
-- **Data hygiene:** Employer names in mock seed data replaced with fictional equivalents (Acme Payments Corp, Nimbus Technologies, Meridian Logistics, Helios Consulting) across `mcp/mock-data.js` and `paytm-wallet-app/src/api/mock.ts`. Merchant-category references (Swiggy, Zomato, etc.) retained per the new Mock Data Policy in `security.md §11`.
+- **Data hygiene:** Employer names in mock seed data replaced with fictional equivalents (Acme Corp, TCS) across `ppi-wallet-mcp/mcp/mock-data.js` and `ppi-wallet-app/src/api/mock.ts`. Merchant-category references (Swiggy, Zomato, etc.) retained per the new Mock Data Policy in `security.md §11`.
 - Stale "₹1L RBI cap" wording in `.claude/rules/sub-wallets.md` and `ADR-003` corrected to reference the tier-aware RBI caps (₹2L Full-KYC / ₹10K Min-KYC) and the code's conservative ₹1L implementation baseline.
 
 ### Known Gaps (not blockers; tracked)

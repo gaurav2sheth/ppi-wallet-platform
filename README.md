@@ -70,19 +70,18 @@ git clone https://github.com/gaurav2sheth/ppi-wallet-platform.git PPI_Wallet
 cd PPI_Wallet
 
 # 2. Code repos
-git clone https://github.com/gaurav2sheth/ppi-wallet-app.git paytm-wallet-app
-git clone https://github.com/gaurav2sheth/ppi-wallet-admin-dashboard.git admin-dashboard
-git clone https://github.com/gaurav2sheth/ppi-wallet-mcp.git mcp
-git clone https://github.com/gaurav2sheth/ppi-wallet-api-deploy.git ppi-wallet-api-deploy
+git clone https://github.com/gaurav2sheth/ppi-wallet-app.git ppi-wallet-app
+git clone https://github.com/gaurav2sheth/ppi-wallet-admin.git ppi-wallet-admin
+git clone https://github.com/gaurav2sheth/ppi-wallet-mcp.git ppi-wallet-mcp
+git clone https://github.com/gaurav2sheth/ppi-wallet-api.git ppi-wallet-api
 ```
 
 | Directory | Repo | Tech | Purpose |
 |-----------|------|------|---------|
-| `paytm-wallet-app/` | [ppi-wallet-app](https://github.com/gaurav2sheth/ppi-wallet-app) | React 19, Vite 8, Tailwind, Zustand | Consumer wallet (mobile-first) |
-| `admin-dashboard/` | [ppi-wallet-admin-dashboard](https://github.com/gaurav2sheth/ppi-wallet-admin-dashboard) | React 19, Vite 6, Ant Design 5, ECharts | Admin dashboard (desktop) |
-| `mcp/` | [ppi-wallet-mcp](https://github.com/gaurav2sheth/ppi-wallet-mcp) | Node.js, Zod | 49 Claude AI tools + 3 AI agents via MCP |
-| `api-server/` | — | Express.js, Claude API | REST API (local dev) |
-| `ppi-wallet-api-deploy/` | [ppi-wallet-api-deploy](https://github.com/gaurav2sheth/ppi-wallet-api-deploy) | Express.js | Production API on Render |
+| `ppi-wallet-app/` | [ppi-wallet-app](https://github.com/gaurav2sheth/ppi-wallet-app) | React 19, Vite 8, Tailwind, Zustand | Consumer wallet (mobile-first) |
+| `ppi-wallet-admin/` | [ppi-wallet-admin](https://github.com/gaurav2sheth/ppi-wallet-admin) | React 19, Vite 8, Ant Design 5, ECharts | Admin dashboard (desktop) |
+| `ppi-wallet-mcp/` | [ppi-wallet-mcp](https://github.com/gaurav2sheth/ppi-wallet-mcp) | Node.js, Zod | 49 Claude AI tools + 3 AI agents via MCP |
+| `ppi-wallet-api/` | [ppi-wallet-api](https://github.com/gaurav2sheth/ppi-wallet-api) | Express.js, Claude API | REST API (production on Render) |
 
 ## Quick Start
 
@@ -90,11 +89,11 @@ Each app works standalone — no backend required for development.
 
 ```bash
 # Consumer wallet (includes built-in mock data)
-cd paytm-wallet-app && npm install && npm run dev
+cd ppi-wallet-app && npm install && npm run dev
 # → http://localhost:5173
 
 # Admin dashboard
-cd admin-dashboard && npm install && npm run dev
+cd ppi-wallet-admin && npm install && npm run dev
 # → http://localhost:5174
 
 # API server (optional, requires ANTHROPIC_API_KEY)
@@ -248,10 +247,10 @@ All projects have comprehensive test suites using Vitest + React Testing Library
 
 ```bash
 # Wallet app — 126 tests (baseline 94 + adversarial 19 + cascade-spend pure 13)
-cd paytm-wallet-app && npm test
+cd ppi-wallet-app && npm test
 
 # Admin dashboard — 111 tests
-cd admin-dashboard && npm test
+cd ppi-wallet-admin && npm test
 
 # MCP — 74 tests (agents 59 + timezone 7 + processLoad 10, minus 2 rolled into new)
 cd mcp && npx vitest run
@@ -259,20 +258,20 @@ cd mcp && npx vitest run
 
 **311 total tests — zero skipped.** Covers utilities, mock data layer, Zustand stores, components, pages, RBAC, auth guards, AI agent functions, cascade-spend invariants (clean decline with no partial debit, category priority, Gift fallback, expired-Gift exclusion), Load Guard concurrency + idempotency-key replay, and timezone-aware monthly-load boundary.
 
-The 4 previously-skipped invariant tests (see earlier review history) have all been unblocked by shipping the corresponding code refactors in commits `07e6d6d` (paytm-wallet-app) and `193d95d` (mcp).
+The 4 previously-skipped invariant tests (see earlier review history) have all been unblocked by shipping the corresponding code refactors in commits `07e6d6d` (ppi-wallet-app) and `193d95d` (mcp).
 
 ## Build & Deploy
 
 ```bash
 # Wallet app → GitHub Pages
-cd paytm-wallet-app
+cd ppi-wallet-app
 npx tsc --noEmit && npx vite build && npx gh-pages -d dist
 
 # Admin dashboard → GitHub Pages
-cd admin-dashboard
+cd ppi-wallet-admin
 npx tsc -b && npx vite build && npx gh-pages -d dist
 
-# API → push to ppi-wallet-api-deploy, auto-deploys on Render
+# API → push to ppi-wallet-api, auto-deploys on Render
 ```
 
 ## Documentation
@@ -329,7 +328,7 @@ All reference documentation has been organized in `docs/`:
 
 ## Design System
 
-Paytm PODS — consistent across both frontends:
+Primary design system — consistent across both frontends:
 
 | Token | Value | Usage |
 |-------|-------|-------|
