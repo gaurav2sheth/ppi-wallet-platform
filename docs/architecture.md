@@ -223,7 +223,7 @@ The MCP server (`mcp/wallet-mcp-server.js`) exposes 49 tools to Claude Desktop v
 - **200 users** with wallets (seeded with deterministic PRNG, seed 42)
 - **500+ transactions** spanning multiple days
 - **Sub-wallets** for users with 5 types (seeded with PRNG seed 500)
-- **Employers**: `employer_001` (Paytm), `employer_002` (TCS)
+- **Employers**: `employer_001`, `employer_002` (fictional names)
 - All balances use **BigInt arithmetic** internally, serialised as strings at API boundary
 - **41 exported functions** for data access and mutation
 
@@ -404,7 +404,7 @@ The shared data file at `.shared-data/wallet-events.json` enables the admin dash
 
 ### 7.7 Design System
 
-Paytm PODS design language:
+Design system with modern color palette:
 
 | Element | Value |
 |---|---|

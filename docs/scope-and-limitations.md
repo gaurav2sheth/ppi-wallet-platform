@@ -49,7 +49,7 @@ An AI-assisted reference implementation built using Claude Code as the primary e
 2. **Hardcoded admin credentials** (`admin/admin123` etc.) for the admin dashboard. Demo-only; would be replaced with SSO + RBAC-integrated auth.
 3. **localStorage-backed Zustand persistence.** Fine for a client-side demo; would be session + server-backed in production with no sensitive state ever written to browser storage.
 4. **HashRouter** for GitHub Pages compatibility. Would be BrowserRouter in production behind a proper web server.
-5. **Seed data includes real employer names** (Paytm, TCS). Acceptable for internal demos; would be neutralised for any external-facing presentation.
+5. **Seed data includes fictional employer names**. Acceptable for demos and reference implementations.
 
 ## What would change on the architecture side for production
 

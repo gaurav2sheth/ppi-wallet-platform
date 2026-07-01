@@ -391,7 +391,7 @@ When adding seed data, examples, or fixtures:
 | Category | Acceptable | Not acceptable |
 | --- | --- | --- |
 | Merchant brand names in category lists | Swiggy, Zomato, Amazon, Flipkart as examples of food-delivery / shopping / etc. categories | Any suggestion that these merchants have a business relationship with this project or PPSL |
-| Employer / customer names | Invented names (Acme Payments Corp, etc.) | Real company names (Paytm, TCS, Infosys, any real employer) |
+| Employer / customer names | Invented names (Acme Payments Corp, Nimbus Technologies, etc.) | Real company names (any real employer) |
 | User profile data | Common Indian first/last name combinations, synthetic phone numbers (`9XXXXXXXXX` patterns) | Real names, real phone numbers, real PAN / Aadhaar |
 | Amounts and dates | Fabricated for realistic distributions | Real transaction amounts from any live system |
 
@@ -399,7 +399,7 @@ When adding seed data, examples, or fixtures:
 
 | Date | Finding | Resolution |
 | --- | --- | --- |
-| 2026-04-17 | Grep across all 5 repos for real company names surfaced `Paytm` and `TCS` in `mcp/mock-data.js` employer seeds and `Paytm (Employer)` in `paytm-wallet-app/src/api/mock.ts` sub-wallet txn seeds. | Replaced with `Acme Payments Corp` / `Nimbus Technologies` / `Meridian Logistics` / `Helios Consulting` across both repos. Merchant-category references (Swiggy, Zomato, etc.) retained per policy. |
+| 2026-04-17 | Audit found real company names in employer seeds across mock-data files. | Replaced with fictional employer names (Acme Payments Corp, Nimbus Technologies, etc.) across all repos. Merchant-category references (Swiggy, Zomato, etc.) retained per policy. |
 
 ## 12. Disclosure Policy
 
