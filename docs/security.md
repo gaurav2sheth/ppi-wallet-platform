@@ -244,7 +244,7 @@ XSS would be possible if malicious content were rendered unescaped. React's defa
 ### 7.3 Recommended CSP (not yet shipped)
 
 ```html
-<!-- suggested addition to paytm-wallet-app/index.html and ppi-wallet-admin/index.html -->
+<!-- suggested addition to ppi-wallet-app/index.html and ppi-wallet-admin/index.html -->
 <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
   script-src 'self';
@@ -390,7 +390,7 @@ When adding seed data, examples, or fixtures:
 
 | Category | Acceptable | Not acceptable |
 | --- | --- | --- |
-| Merchant brand names in category lists | Swiggy, Zomato, Amazon, Flipkart as examples of food-delivery / shopping / etc. categories | Any suggestion that these merchants have a business relationship with this project or PPSL |
+| Merchant brand names in category lists | Swiggy, Zomato, Amazon, Flipkart as examples of food-delivery / shopping / etc. categories | Any suggestion that these merchants have a business relationship with this project |
 | Employer / customer names | Invented names (Acme Payments Corp, Nimbus Technologies, etc.) | Real company names (any real employer) |
 | User profile data | Common Indian first/last name combinations, synthetic phone numbers (`9XXXXXXXXX` patterns) | Real names, real phone numbers, real PAN / Aadhaar |
 | Amounts and dates | Fabricated for realistic distributions | Real transaction amounts from any live system |

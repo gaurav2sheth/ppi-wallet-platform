@@ -12,7 +12,7 @@ The platform enforces Indian regulatory compliance (RBI PPI Master Directions) a
 
 | Repo / Directory | Tech Stack | Port | Purpose |
 |---|---|---|---|
-| `paytm-wallet-app/` | React 19 + Vite 8 + Tailwind CSS v4 + Zustand + Axios | 5173 | Consumer wallet UI (mobile-first SPA) |
+| `ppi-wallet-app/` | React 19 + Vite 8 + Tailwind CSS v4 + Zustand + Axios | 5173 | Consumer wallet UI (mobile-first SPA) |
 | `ppi-wallet-admin/` | React 19 + Vite 8 + Ant Design v5 + Zustand | 5174 | Admin operations dashboard (desktop) |
 | `mcp/` | Node.js + `@modelcontextprotocol/sdk` + Zod | stdio | 49 Claude AI tools via MCP protocol (8 categories) |
 | `api-server/` | Express.js + `@anthropic-ai/sdk` + CORS | 3001 | REST API (chat, support/KYC agents, load guard, sub-wallets — 28 routes) |
@@ -21,11 +21,11 @@ The platform enforces Indian regulatory compliance (RBI PPI Master Directions) a
 ### Git Repositories (4 Separate Repos)
 
 ```
-paytm-wallet-app/       -> github.com/gaurav2sheth/ppi-wallet-app
-ppi-wallet-admin/         -> github.com/gaurav2sheth/ppi-wallet-admin
-mcp/                     -> github.com/gaurav2sheth/ppi-wallet-mcp
-api-server/              -> (local only, deployed via ppi-wallet-api-deploy)
-ppi-wallet-api-deploy/   -> github.com/gaurav2sheth/ppi-wallet-api-deploy
+ppi-wallet-app/         -> github.com/gaurav2sheth/ppi-wallet-app
+ppi-wallet-admin/       -> github.com/gaurav2sheth/ppi-wallet-admin
+mcp/                    -> github.com/gaurav2sheth/ppi-wallet-mcp
+api-server/             -> (local only, deployed via ppi-wallet-api-deploy)
+ppi-wallet-api-deploy/  -> github.com/gaurav2sheth/ppi-wallet-api-deploy
 ```
 
 ### Live URLs
@@ -223,7 +223,7 @@ The MCP server (`mcp/wallet-mcp-server.js`) exposes 49 tools to Claude Desktop v
 - **200 users** with wallets (seeded with deterministic PRNG, seed 42)
 - **500+ transactions** spanning multiple days
 - **Sub-wallets** for users with 5 types (seeded with PRNG seed 500)
-- **Employers**: `employer_001`, `employer_002` (fictional names)
+- **Employers**: `employer_001`, `employer_002` (fictional names for demo)
 - All balances use **BigInt arithmetic** internally, serialised as strings at API boundary
 - **41 exported functions** for data access and mutation
 
@@ -524,8 +524,8 @@ The sub-wallet system manages purpose-locked corporate benefit wallets loaded by
 
 | Employer ID | Name | Allowed Sub-Wallet Types |
 |---|---|---|
-| `employer_001` | Paytm | All types |
-| `employer_002` | TCS | All types |
+| `employer_001` | Example Corp A | All types |
+| `employer_002` | Example Corp B | All types |
 
 ### 9.6 Utilisation Dashboard API
 
@@ -766,7 +766,7 @@ All UI display of monetary values MUST use `formatPaise()`. Never format manuall
 
 ```bash
 # Wallet app (works standalone with built-in mock data)
-cd paytm-wallet-app && npm install && npm run dev
+cd ppi-wallet-app && npm install && npm run dev
 
 # Admin dashboard
 cd ppi-wallet-admin && npm install && npm run dev
@@ -779,7 +779,7 @@ cd api-server && npm install && npm run dev
 
 ```bash
 # Wallet app
-cd paytm-wallet-app
+cd ppi-wallet-app
 /usr/local/bin/node ./node_modules/.bin/tsc --noEmit   # type-check
 /usr/local/bin/node ./node_modules/.bin/vite build      # build
 

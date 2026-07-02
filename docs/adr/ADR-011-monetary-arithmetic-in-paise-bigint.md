@@ -15,7 +15,7 @@ A secondary consideration is scale. Large corporate payouts or aggregated settle
 All monetary values are stored as **integers in paise**, using JavaScript `BigInt` for internal arithmetic inside the MCP / server layer. Values are serialised as decimal strings at API boundaries. Display formatting converts back to rupees with two decimal places using `en-IN` locale formatting via a shared `formatPaise()` helper.
 
 Concretely:
-- Mock layer in `paytm-wallet-app/src/api/mock.ts`: `Number` paise for single-user math (always < `MAX_SAFE_INTEGER` in practice), strings at the localStorage boundary.
+- Mock layer in `ppi-wallet-app/src/api/mock.ts`: `Number` paise for single-user math (always < `MAX_SAFE_INTEGER` in practice), strings at the localStorage boundary.
 - Server / MCP in `mcp/mock-data.js`: `BigInt` for aggregates, strings across the wire.
 - API responses always use strings for paise values to prevent JSON number coercion.
 - Display via `formatPaise(paise: string | number): string` returning `"₹X,XX,XXX.XX"`.
@@ -47,4 +47,4 @@ Concretely:
 - MCP repo `CLAUDE.md`: "All balances use BigInt arithmetic internally, serialised as strings at API boundary."
 - [ADR-003](ADR-003-subwallets-in-rbi-cap.md) — cap math depends on precise paise arithmetic at the aggregate level.
 - [ADR-007](ADR-007-ai-context-sync.md) — context-sync's `balance_paise` field documented as a string.
-- `paytm-wallet-app/src/utils/format.ts` — `formatPaise()` implementation.
+- `ppi-wallet-app/src/utils/format.ts` — `formatPaise()` implementation.

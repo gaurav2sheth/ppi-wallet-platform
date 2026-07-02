@@ -86,7 +86,7 @@ Each request individually is under cap (₹95K + ₹3K = ₹98K); together they'
 - Two ledger entries: `SUB_WALLET_TXN(FOOD, -400)` + `DEBIT(MAIN, -100)`
 - User sees single "Swiggy ₹500" in passbook (grouped by saga)
 
-**Current status:** ✅ Implemented in `mockPayMerchant` cascade logic. Test exists at `paytm-wallet-app/src/api/__tests__/cascade.test.ts`.
+**Current status:** ✅ Implemented in `mockPayMerchant` cascade logic. Test exists at `ppi-wallet-app/src/api/__tests__/cascade.test.ts`.
 
 ### 2.2 Partial shortfall: Food ₹400 + main ₹80 → Swiggy ₹500
 
@@ -370,7 +370,7 @@ Total: ₹10,000 + ₹90,000 + ₹3,000 + ₹3,000 + ₹300 = **₹1,06,300**
 - Any load that would put total > ₹1,00,000 must be rejected
 - The ₹300 FASTag deposit counts toward the cap
 
-**Current status:** ✅ Load Guard aggregates all sub-wallets including FASTag deposit. Test: `paytm-wallet-app/src/api/__tests__/load-guard.test.ts`.
+**Current status:** ✅ Load Guard aggregates all sub-wallets including FASTag deposit. Test: `ppi-wallet-app/src/api/__tests__/load-guard.test.ts`.
 
 ### 7.2 Cap boundary — exactly ₹1,00,000
 
