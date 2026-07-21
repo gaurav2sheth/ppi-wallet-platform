@@ -31,28 +31,8 @@ Contains: consumer mobile wallet, admin operations dashboard, Express API server
 ## Architecture
 
 ```
-┌─────────────────────┐   ┌─────────────────────┐
-│  Consumer Wallet UI │   │  Admin Dashboard UI  │
-│  React 19 + Vite 8  │   │  React 19 + Ant Design│
-│  Tailwind + Zustand  │   │  ECharts + Zustand   │
-│  Port 5173           │   │  Port 5174           │
-└────────┬────────────┘   └────────┬─────────────┘
-         │                         │
-         └──────────┬──────────────┘
-                    ▼
-         ┌─────────────────────┐
-         │   Express API       │
-         │   Claude AI + MCP   │
-         │   Port 3001         │
-         └──────────┬──────────┘
-                    │
-         ┌──────────┴──────────┐
-         │                     │
-┌────────▼────────┐  ┌────────▼────────┐
-│  MCP Server     │  │  AI Agents      │
-│  49 Tools (Zod) │  │  KYC + Support  │
-│  stdio transport│  │  Cron Scheduler │
-└─────────────────┘  └─────────────────┘
+<img width="1440" height="1120" alt="image" src="https://github.com/user-attachments/assets/19b8b8c8-06e3-45e8-bd31-6706b03c71e1" />
+
 ```
 
 **3-tier API fallback** — The wallet app always works, even offline:
