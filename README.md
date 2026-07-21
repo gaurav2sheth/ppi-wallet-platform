@@ -30,12 +30,11 @@ Contains: consumer mobile wallet, admin operations dashboard, Express API server
 
 ## Architecture
 
-```
 
-<img width="2720" height="2240" alt="query_flow_wallet_to_mcp_v3" src="https://github.com/user-attachments/assets/4d5fe2b5-d7ca-4b76-93a6-13e31b483ee3" />
+<img width="2720" height="2240" alt="query_flow_wallet_to_mcp_v3" src="https://github.com/user-attachments/assets/fa1b3e67-1829-4925-a694-4427c2c9c1e9" />
 
 
-```
+
 
 **3-tier API fallback** — The wallet app always works, even offline:
 1. Vite dev middleware (proxied API)
