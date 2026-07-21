@@ -31,7 +31,7 @@ Contains: consumer mobile wallet, admin operations dashboard, Express API server
 ## Architecture
 
 
-<img width="2720" height="2240" alt="query_flow_wallet_to_mcp_v3" src="https://github.com/user-attachments/assets/fa1b3e67-1829-4925-a694-4427c2c9c1e9" />
+<img width="1813" height="1493" alt="query_flow_wallet_to_mcp_v3" src="https://github.com/user-attachments/assets/fa1b3e67-1829-4925-a694-4427c2c9c1e9" />
 
 
 
